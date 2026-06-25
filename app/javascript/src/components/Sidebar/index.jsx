@@ -2,15 +2,16 @@ import routes from "constants/routes";
 
 import React from "react";
 
+import Avvvatars from "avvvatars-react";
 import classnames from "classnames";
-import { Book } from "neetoicons";
+import { AppSwitcher, Articles } from "neetoicons";
 import { Link, useLocation } from "react-router-dom";
 
 const NAV_ITEMS = [
   {
     label: "Blog Posts",
     path: routes.posts.index,
-    icon: Book,
+    icon: Articles,
   },
 ];
 
@@ -48,11 +49,11 @@ const Sidebar = () => {
           title="Categories"
           type="button"
         >
-          <Book size={20} />
+          <AppSwitcher size={20} />
         </button>
       </nav>
       <div className="flex justify-center px-2">
-        <Book size={32} style="character" value="BlogIt User" />
+        <Avvvatars size={32} style="character" value="BlogIt User" />
       </div>
     </aside>
   );

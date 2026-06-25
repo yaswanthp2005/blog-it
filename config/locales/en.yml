@@ -29,3 +29,8 @@
 
 en:
   hello: "Hello world"
+
+en:
+  post:
+    slug:
+      immutable: "is immutable!"
