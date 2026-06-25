@@ -11,6 +11,10 @@ Rails.application.routes.draw do
   # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
+  constraints(lambda { |req| req.format == :json }) do
+    resources :posts, only: :index
+  end
+
   root "home#index"
   get "*path",
     to: "home#index",
