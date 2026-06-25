@@ -4,6 +4,12 @@ class Post < ApplicationRecord
   MAX_TITLE_LENGTH = 125
   MAX_DESCRIPTION_LENGTH = 10000
 
+  belongs_to :organization
+  belongs_to :user
+
+  has_many :post_categories, dependent: :destroy
+  has_many :categories, through: :post_categories
+
   validates :title, presence: true, length: { maximum: MAX_TITLE_LENGTH }
   validates :description, presence: true, length: { maximum: MAX_DESCRIPTION_LENGTH }
 

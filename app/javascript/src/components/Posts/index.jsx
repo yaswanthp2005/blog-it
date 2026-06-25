@@ -1,8 +1,11 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useState } from "react";
 
+import AddCategoryModal from "components/Categories/AddModal";
+import CategoriesSidebar from "components/Categories/Sidebar";
 import { Container } from "components/commons";
+import { useCreateCategory } from "hooks/reactQuery/useCategoriesApi";
 import { useFetchPosts } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
 import { Button, NoData, Spinner, Typography } from "neetoui";
@@ -14,7 +17,24 @@ import Card from "./Card";
 const POSTS_LISTING_TITLE = "Blog posts";
 
 const Posts = () => {
-  const { data: posts, isLoading } = useFetchPosts();
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const { mutateAsync: createCategory } = useCreateCategory();
+  const { data: posts, isLoading } = useFetchPosts({
+    category_id: selectedCategoryId,
+  });
+
+  const handleCreateCategory = async () => {
+    if (!newCategoryName.trim()) {
+      return;
+    }
+
+    await createCategory({ name: newCategoryName.trim() });
+    setNewCategoryName("");
+    setIsCategoryModalOpen(false);
+  };
 
   const renderContent = () => {
     if (isLoading) {
@@ -41,7 +61,20 @@ const Posts = () => {
   };
 
   return (
-    <Container>
+    <Container
+      showCategoryIcon
+      isCategoriesOpen={isCategoriesOpen}
+      leftSidebar={
+        <CategoriesSidebar
+          isOpen={isCategoriesOpen}
+          selectedCategoryId={selectedCategoryId}
+          onAddCategory={() => setIsCategoryModalOpen(true)}
+          onSelectCategory={setSelectedCategoryId}
+        />
+      }
+      onBookClick={() => setIsCategoriesOpen(false)}
+      onCategoryClick={() => setIsCategoriesOpen(state => !state)}
+    >
       <div className="mb-8 flex items-center justify-between gap-x-4">
         <Typography className="text-gray-900" style="h2" weight="semibold">
           {POSTS_LISTING_TITLE}
@@ -51,6 +84,13 @@ const Posts = () => {
         </Link>
       </div>
       {renderContent()}
+      <AddCategoryModal
+        categoryName={newCategoryName}
+        isOpen={isCategoryModalOpen}
+        onCancel={() => setIsCategoryModalOpen(false)}
+        onChange={event => setNewCategoryName(event.target.value)}
+        onSave={handleCreateCategory}
+      />
     </Container>
   );
 };

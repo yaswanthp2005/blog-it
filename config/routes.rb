@@ -12,6 +12,7 @@ Rails.application.routes.draw do
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   constraints(lambda { |req| req.format == :json }) do
+    resources :categories, only: %i[index create]
     resources :posts, except: %i[new edit], param: :slug
   end
 

@@ -10,8 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_06_25_110352) do
+ActiveRecord::Schema[8.0].define(version: 2026_06_25_110356) do
+  create_table "categories", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_categories_on_name", unique: true
+  end
+
   create_table "data_migrations", primary_key: "version", id: :string, force: :cascade do |t|
+  end
+
+  create_table "organizations", force: :cascade do |t|
+    t.string "name", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_organizations_on_name", unique: true
+  end
+
+  create_table "post_categories", force: :cascade do |t|
+    t.integer "post_id", null: false
+    t.integer "category_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_post_categories_on_category_id"
+    t.index ["post_id", "category_id"], name: "index_post_categories_on_post_id_and_category_id", unique: true
+    t.index ["post_id"], name: "index_post_categories_on_post_id"
   end
 
   create_table "posts", force: :cascade do |t|
@@ -23,6 +47,27 @@ ActiveRecord::Schema[8.0].define(version: 2026_06_25_110352) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "slug", null: false
+    t.integer "user_id", null: false
+    t.integer "organization_id", null: false
+    t.index ["organization_id"], name: "index_posts_on_organization_id"
     t.index ["slug"], name: "index_posts_on_slug", unique: true
+    t.index ["user_id"], name: "index_posts_on_user_id"
   end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.string "password_digest", null: false
+    t.integer "organization_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["organization_id"], name: "index_users_on_organization_id"
+  end
+
+  add_foreign_key "post_categories", "categories"
+  add_foreign_key "post_categories", "posts"
+  add_foreign_key "posts", "organizations"
+  add_foreign_key "posts", "users"
+  add_foreign_key "users", "organizations"
 end

@@ -1,12 +1,15 @@
 import axios from "axios";
 
-const fetch = () => axios.get("/posts");
+const fetch = params => axios.get("/posts", { params });
 
 const show = slug => axios.get(`/posts/${slug}`);
 
-const create = payload =>
+const create = ({ categoryIds, ...payload }) =>
   axios.post("/posts", {
-    post: payload,
+    post: {
+      ...payload,
+      category_ids: categoryIds,
+    },
   });
 
 const postsApi = {
