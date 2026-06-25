@@ -1,8 +1,7 @@
 import axios from "axios";
 import { Toastr } from "components/commons";
+import i18n from "translations";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
-
-const DEFAULT_ERROR_NOTIFICATION = "Something went wrong!";
 
 axios.defaults.baseURL = "/";
 
@@ -47,7 +46,8 @@ const handleErrorResponse = axiosErrorObject => {
   }
 
   Toastr.error(
-    axiosErrorObject.response?.data?.error || DEFAULT_ERROR_NOTIFICATION
+    axiosErrorObject.response?.data?.error ||
+      i18n.t("common.somethingWentWrong")
   );
 
   return Promise.reject(axiosErrorObject);

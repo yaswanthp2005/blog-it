@@ -20,6 +20,7 @@ const alias = {
   routes: absolutePath("src/routes.js"),
   assets: absolutePath("../assets"),
   utils: absolutePath("src/utils"),
+  translations: absolutePath("src/translations"),
   neetoui: path.resolve(process.cwd(), "node_modules/@bigbinary/neetoui/dist"),
   neetoicons: path.resolve(
     process.cwd(),

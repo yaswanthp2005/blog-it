@@ -8,6 +8,7 @@ import { useShowPost } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
 import { Edit } from "neetoicons";
 import { Button, NoData, Spinner, Tag, Typography } from "neetoui";
+import { useTranslation } from "react-i18next";
 import { generatePath, useHistory, useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
@@ -15,11 +16,10 @@ import withTitle from "utils/withTitle";
 import { POST_STATUSES } from "./constants";
 import { formatPublishedDate } from "./utils";
 
-const SHOW_POST_TITLE = "Blog post";
-
 const Show = () => {
   const history = useHistory();
   const { slug } = useParams();
+  const { t } = useTranslation();
   const { data: post, isLoading } = useShowPost(slug);
   const currentUserId = getFromLocalStorage("authUserId");
 
@@ -36,7 +36,7 @@ const Show = () => {
   if (!post) {
     return (
       <Container>
-        <NoData title="Blog post not found" />
+        <NoData title={t("posts.notFound")} />
       </Container>
     );
   }
@@ -84,7 +84,7 @@ const Show = () => {
             {isDraft && (
               <Tag
                 className="!border-red-300 !bg-white !text-red-600"
-                label="Draft"
+                label={t("posts.draft")}
                 style="default"
                 type="outline"
               />
@@ -96,7 +96,7 @@ const Show = () => {
               icon={Edit}
               iconSize={20}
               style="text"
-              tooltipProps={{ content: "Edit" }}
+              tooltipProps={{ content: t("common.edit") }}
               onClick={handleEdit}
             />
           )}
@@ -134,4 +134,4 @@ const Show = () => {
   );
 };
 
-export default withTitle(Show, SHOW_POST_TITLE);
+export default withTitle(Show, "posts.showTitle");

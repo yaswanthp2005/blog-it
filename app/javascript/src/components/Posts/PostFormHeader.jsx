@@ -1,19 +1,15 @@
 import routes from "constants/routes";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { useFormikContext } from "formik";
 import { Check, MenuHorizontal, UpArrow } from "neetoicons";
 import { ActionDropdown, Button, Dropdown, Typography } from "neetoui";
 import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
 import { POST_STATUSES } from "./constants";
-
-const PRIMARY_ACTION_LABELS = {
-  [POST_STATUSES.DRAFT]: "Save as draft",
-  [POST_STATUSES.PUBLISHED]: "Publish",
-};
 
 const PostFormHeader = ({
   defaultPrimaryAction,
@@ -26,9 +22,18 @@ const PostFormHeader = ({
   showPreview,
 }) => {
   const history = useHistory();
+  const { t } = useTranslation();
   const { setTouched, validateForm, values } = useFormikContext();
   const [primaryAction, setPrimaryAction] = useState(
     defaultPrimaryAction || POST_STATUSES.PUBLISHED
+  );
+
+  const primaryActionLabels = useMemo(
+    () => ({
+      [POST_STATUSES.DRAFT]: t("posts.saveAsDraft"),
+      [POST_STATUSES.PUBLISHED]: t("posts.publish"),
+    }),
+    [t]
   );
 
   useEffect(() => {
@@ -74,7 +79,7 @@ const PostFormHeader = ({
     <ActionDropdown
       buttonStyle="primary"
       className="[&_.neeto-ui-btn--style-primary]:!bg-gray-900 [&_.neeto-ui-btn--style-primary]:hover:!bg-black"
-      label={PRIMARY_ACTION_LABELS[primaryAction]}
+      label={primaryActionLabels[primaryAction]}
       onClick={() => handleAction(primaryAction)}
     >
       <ActionDropdown.Menu>
@@ -82,13 +87,13 @@ const PostFormHeader = ({
           prefix={renderCheckPrefix(primaryAction === POST_STATUSES.PUBLISHED)}
           onClick={() => setPrimaryAction(POST_STATUSES.PUBLISHED)}
         >
-          Publish
+          {t("posts.publish")}
         </ActionDropdown.MenuItem.Button>
         <ActionDropdown.MenuItem.Button
           prefix={renderCheckPrefix(primaryAction === POST_STATUSES.DRAFT)}
           onClick={() => setPrimaryAction(POST_STATUSES.DRAFT)}
         >
-          Save as draft
+          {t("posts.saveAsDraft")}
         </ActionDropdown.MenuItem.Button>
       </ActionDropdown.Menu>
     </ActionDropdown>
@@ -102,13 +107,13 @@ const PostFormHeader = ({
           icon={MenuHorizontal}
           iconSize={20}
           style="text"
-          tooltipProps={{ content: "More actions" }}
+          tooltipProps={{ content: t("posts.moreActions") }}
         />
       }
     >
       <Dropdown.Menu>
         <Dropdown.MenuItem.Button style="danger" onClick={onDelete}>
-          Delete
+          {t("common.delete")}
         </Dropdown.MenuItem.Button>
       </Dropdown.Menu>
     </Dropdown>
@@ -124,11 +129,15 @@ const PostFormHeader = ({
           <Button
             icon={() => <UpArrow className="rotate-45" size={20} />}
             style="text"
-            tooltipProps={{ content: "Preview" }}
+            tooltipProps={{ content: t("common.preview") }}
             onClick={onPreview}
           />
         )}
-        <Button label="Cancel" style="secondary" onClick={handleCancel} />
+        <Button
+          label={t("common.cancel")}
+          style="secondary"
+          onClick={handleCancel}
+        />
         {renderPrimaryActionMenu()}
         {showMoreActions && renderMoreActionsMenu()}
       </div>

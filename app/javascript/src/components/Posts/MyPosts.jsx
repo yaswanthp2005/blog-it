@@ -19,17 +19,18 @@ import {
   Tooltip,
   Typography,
 } from "neetoui";
+import { Trans, useTranslation } from "react-i18next";
 import { Link, generatePath } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
 import { POST_STATUSES } from "./constants";
-import { capitalizeStatus, formatMyPostsDateTime } from "./utils";
+import { formatMyPostsDateTime } from "./utils";
 
-const MY_POSTS_TITLE = "My blog posts";
 const TITLE_MAX_LENGTH = 50;
 const DEFAULT_PAGE_SIZE = 10;
 
 const MyPosts = () => {
+  const { t } = useTranslation();
   const { data: posts, isLoading } = useFetchMyPosts();
   const { mutateAsync: updatePost } = useUpdatePost();
   const { mutateAsync: destroyPost } = useDestroyPost();
@@ -94,7 +95,7 @@ const MyPosts = () => {
             icon={MenuHorizontal}
             iconSize={20}
             style="text"
-            tooltipProps={{ content: "Actions" }}
+            tooltipProps={{ content: t("common.actions") }}
           />
         }
       >
@@ -105,66 +106,69 @@ const MyPosts = () => {
                 handleStatusChange(post.slug, POST_STATUSES.PUBLISHED)
               }
             >
-              Publish
+              {t("posts.publish")}
             </Dropdown.MenuItem.Button>
           ) : (
             <Dropdown.MenuItem.Button
               onClick={() => handleStatusChange(post.slug, POST_STATUSES.DRAFT)}
             >
-              Unpublish
+              {t("posts.unpublish")}
             </Dropdown.MenuItem.Button>
           )}
           <Dropdown.MenuItem.Button
             style="danger"
             onClick={() => setPostToDelete(post)}
           >
-            Delete
+            {t("common.delete")}
           </Dropdown.MenuItem.Button>
         </Dropdown.Menu>
       </Dropdown>
     );
   };
 
-  const columnData = [
-    {
-      title: "Title",
-      dataIndex: "title",
-      key: "title",
-      ellipsis: false,
-      render: (title, post) => (
-        <Link to={generatePath(routes.posts.edit, { slug: post.slug })}>
-          {renderTitle(title)}
-        </Link>
-      ),
-    },
-    {
-      title: "Category",
-      dataIndex: "categories",
-      key: "category",
-      render: categories =>
-        categories.map(category => category.name).join(", "),
-    },
-    {
-      title: "Last published at",
-      dataIndex: "lastPublishedAt",
-      key: "lastPublishedAt",
-      render: (_, post) => formatMyPostsDateTime(post),
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: status => capitalizeStatus(status),
-    },
-    {
-      dataIndex: "actions",
-      fixed: "right",
-      key: "actions",
-      align: "center",
-      width: 80,
-      render: (_, post) => renderActions(post),
-    },
-  ];
+  const columnData = useMemo(
+    () => [
+      {
+        title: t("posts.table.title"),
+        dataIndex: "title",
+        key: "title",
+        ellipsis: false,
+        render: (title, post) => (
+          <Link to={generatePath(routes.posts.edit, { slug: post.slug })}>
+            {renderTitle(title)}
+          </Link>
+        ),
+      },
+      {
+        title: t("posts.table.category"),
+        dataIndex: "categories",
+        key: "category",
+        render: categories =>
+          categories.map(category => category.name).join(", "),
+      },
+      {
+        title: t("posts.table.lastPublishedAt"),
+        dataIndex: "lastPublishedAt",
+        key: "lastPublishedAt",
+        render: (_, post) => formatMyPostsDateTime(post),
+      },
+      {
+        title: t("posts.table.status"),
+        dataIndex: "status",
+        key: "status",
+        render: status => t(`posts.${status}`),
+      },
+      {
+        dataIndex: "actions",
+        fixed: "right",
+        key: "actions",
+        align: "center",
+        width: 80,
+        render: (_, post) => renderActions(post),
+      },
+    ],
+    [t]
+  );
 
   const rowData = useMemo(
     () => (posts ? posts.map(keysToCamelCase) : []),
@@ -178,7 +182,7 @@ const MyPosts = () => {
 
   const renderContent = () => {
     if (!isLoading && !posts?.length) {
-      return <NoData title="No blog posts yet" />;
+      return <NoData title={t("posts.noBlogPostsYet")} />;
     }
 
     return (
@@ -196,10 +200,16 @@ const MyPosts = () => {
         selectedRowKeys={selectedRowKeys}
         totalCount={totalCount}
         bulkSelectAllRowsProps={{
-          allRowsSelectedMessage: `All ${totalCount} blog posts selected.`,
-          clearSelectionButtonLabel: "Clear selection",
-          selectAllRowButtonLabel: `Select all ${totalCount} blog posts`,
-          selectAllRowMessage: `${selectedCount} blog posts selected on this page.`,
+          allRowsSelectedMessage: t("posts.table.allSelected", {
+            count: totalCount,
+          }),
+          clearSelectionButtonLabel: t("common.clearSelection"),
+          selectAllRowButtonLabel: t("posts.table.selectAll", {
+            count: totalCount,
+          }),
+          selectAllRowMessage: t("posts.table.selectedOnPage", {
+            count: selectedCount,
+          }),
           setBulkSelectedAllRows,
         }}
         onRowSelect={setSelectedRowKeys}
@@ -210,20 +220,20 @@ const MyPosts = () => {
   return (
     <Container>
       <Typography className="mb-8 text-gray-900" style="h2" weight="semibold">
-        {MY_POSTS_TITLE}
+        {t("posts.myPostsTitle")}
       </Typography>
       {renderContent()}
       <Alert
         isOpen={Boolean(postToDelete)}
         isSubmitting={isDeleting}
-        submitButtonLabel="Yes, delete"
-        title="Delete blog post"
+        submitButtonLabel={t("common.yesDelete")}
+        title={t("posts.deleteTitle")}
         message={
-          <>
-            Are you sure you want to delete{" "}
-            <strong>{postToDelete?.title}</strong>? This action cannot be
-            undone.
-          </>
+          <Trans
+            components={{ 1: <strong /> }}
+            i18nKey="posts.deleteConfirmMessage"
+            values={{ title: postToDelete?.title }}
+          />
         }
         onClose={() => setPostToDelete(null)}
         onSubmit={handleDelete}
@@ -232,4 +242,4 @@ const MyPosts = () => {
   );
 };
 
-export default withTitle(MyPosts, MY_POSTS_TITLE);
+export default withTitle(MyPosts, "posts.myPostsTitle");

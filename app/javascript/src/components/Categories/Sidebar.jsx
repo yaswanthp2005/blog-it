@@ -6,6 +6,7 @@ import { keysToCamelCase } from "neetocist";
 import { Plus, Search } from "neetoicons";
 import { Button, Input, Typography } from "neetoui";
 import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 
 const CategoriesSidebar = ({
   isOpen,
@@ -13,6 +14,7 @@ const CategoriesSidebar = ({
   onSelectCategories,
   selectedCategoryIds,
 }) => {
+  const { t } = useTranslation();
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const { data: categories, isLoading } = useFetchCategories();
@@ -48,21 +50,21 @@ const CategoriesSidebar = ({
           style="nano"
           weight="bold"
         >
-          CATEGORIES
+          {t("categories.title")}
         </Typography>
         <div className="flex items-center gap-x-1">
           <Button
             icon={Search}
             size="small"
             style="text"
-            tooltipProps={{ content: "Search categories" }}
+            tooltipProps={{ content: t("categories.searchCategories") }}
             onClick={() => setIsSearchVisible(state => !state)}
           />
           <Button
             icon={Plus}
             size="small"
             style="text"
-            tooltipProps={{ content: "Add category" }}
+            tooltipProps={{ content: t("categories.addCategory") }}
             onClick={onAddCategory}
           />
         </div>
@@ -70,7 +72,7 @@ const CategoriesSidebar = ({
       {isSearchVisible && (
         <Input
           className="mb-4"
-          placeholder="Search categories"
+          placeholder={t("categories.searchPlaceholder")}
           value={searchTerm}
           onChange={event => setSearchTerm(event.target.value)}
         />
@@ -96,7 +98,7 @@ const CategoriesSidebar = ({
         ))}
         {!filteredCategories.length && !isLoading && (
           <Typography className="px-2 py-2 text-gray-500" style="body3">
-            No categories found
+            {t("categories.noCategoriesFound")}
           </Typography>
         )}
       </div>

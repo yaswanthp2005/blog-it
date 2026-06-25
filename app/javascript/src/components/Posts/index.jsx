@@ -9,14 +9,14 @@ import { useCreateCategory } from "hooks/reactQuery/useCategoriesApi";
 import { useFetchPosts } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
 import { Button, NoData, Spinner, Typography } from "neetoui";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
 import Card from "./Card";
 
-const POSTS_LISTING_TITLE = "Blog posts";
-
 const Posts = () => {
+  const { t } = useTranslation();
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
@@ -46,7 +46,7 @@ const Posts = () => {
     }
 
     if (!posts?.length) {
-      return <NoData title="No blog posts yet" />;
+      return <NoData title={t("posts.noBlogPostsYet")} />;
     }
 
     const normalizedPosts = posts.map(keysToCamelCase);
@@ -79,10 +79,10 @@ const Posts = () => {
     >
       <div className="mb-8 flex items-center justify-between gap-x-4">
         <Typography className="text-gray-900" style="h2" weight="semibold">
-          {POSTS_LISTING_TITLE}
+          {t("posts.listingTitle")}
         </Typography>
         <Link to={routes.posts.create}>
-          <Button label="Add new blog post" style="primary" />
+          <Button label={t("posts.addNewBlogPost")} style="primary" />
         </Link>
       </div>
       {renderContent()}
@@ -97,4 +97,4 @@ const Posts = () => {
   );
 };
 
-export default withTitle(Posts, POSTS_LISTING_TITLE);
+export default withTitle(Posts, "posts.listingTitle");

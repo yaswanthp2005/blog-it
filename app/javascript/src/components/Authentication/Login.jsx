@@ -1,12 +1,13 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import authApi from "apis/auth";
 import { setAuthHeaders } from "apis/axios";
 import { Lock } from "neetoicons";
 import { Button, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { setToLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
@@ -14,14 +15,20 @@ import * as Yup from "yup";
 
 const LOGIN_FORM_INITIAL_VALUES = { email: "", password: "" };
 
-const LOGIN_FORM_VALIDATION_SCHEMA = Yup.object({
-  email: Yup.string()
-    .email("Enter a valid email")
-    .required("Email is required"),
-  password: Yup.string().required("Password is required"),
-});
-
 const Login = () => {
+  const { t } = useTranslation();
+
+  const loginFormValidationSchema = useMemo(
+    () =>
+      Yup.object({
+        email: Yup.string()
+          .email(t("auth.validation.emailInvalid"))
+          .required(t("auth.validation.emailRequired")),
+        password: Yup.string().required(t("auth.validation.passwordRequired")),
+      }),
+    [t]
+  );
+
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await authApi.login(values);
@@ -46,7 +53,7 @@ const Login = () => {
         <div className="mb-6 flex items-center justify-center gap-x-2 text-gray-900">
           <Lock size={22} />
           <Typography style="h2" weight="semibold">
-            Sign In
+            {t("auth.signIn")}
           </Typography>
         </div>
         <div className="mb-6 text-center">
@@ -54,32 +61,32 @@ const Login = () => {
             className="text-sm font-medium text-gray-900 underline hover:text-black"
             to={routes.signup}
           >
-            Or Register Now
+            {t("auth.orRegisterNow")}
           </Link>
         </div>
         <NeetoUIForm
           formikProps={{
             initialValues: LOGIN_FORM_INITIAL_VALUES,
-            validationSchema: LOGIN_FORM_VALIDATION_SCHEMA,
+            validationSchema: loginFormValidationSchema,
             onSubmit: handleSubmit,
           }}
         >
           <div className="flex flex-col gap-y-4">
             <Input
-              label="Email"
+              label={t("auth.email")}
               name="email"
-              placeholder="oliver@example.com"
+              placeholder={t("auth.emailPlaceholder")}
               type="email"
             />
             <Input
-              label="Password"
+              label={t("auth.password")}
               name="password"
-              placeholder="********"
+              placeholder={t("auth.passwordPlaceholder")}
               type="password"
             />
             <Button
               className="!justify-center !bg-gray-900 hover:!bg-black"
-              label="Sign In"
+              label={t("auth.signIn")}
               type="submit"
             />
           </div>
@@ -89,4 +96,4 @@ const Login = () => {
   );
 };
 
-export default withTitle(Login, "Login");
+export default withTitle(Login, "auth.loginPageTitle");

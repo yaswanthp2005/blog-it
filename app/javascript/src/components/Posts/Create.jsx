@@ -1,6 +1,6 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
@@ -8,23 +8,25 @@ import { useCreatePost } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
 import { Spinner } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
+import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
 import {
+  getPostFormValidationSchema,
   POST_FORM_INITIAL_VALUES,
-  POST_FORM_VALIDATION_SCHEMA,
 } from "./constants";
 import Form from "./Form";
 import PostFormHeader from "./PostFormHeader";
 import { buildCategoryIds, buildCategoryOptions } from "./utils";
 
-const CREATE_POST_TITLE = "New blog post";
-
 const Create = () => {
   const history = useHistory();
+  const { t } = useTranslation();
   const { mutateAsync: createPost } = useCreatePost();
   const { data: categories, isLoading } = useFetchCategories();
+
+  const validationSchema = useMemo(() => getPostFormValidationSchema(t), [t]);
 
   const categoryOptions = buildCategoryOptions(
     categories?.map(keysToCamelCase)
@@ -56,12 +58,12 @@ const Create = () => {
       <NeetoUIForm
         formikProps={{
           initialValues: POST_FORM_INITIAL_VALUES,
-          validationSchema: POST_FORM_VALIDATION_SCHEMA,
+          validationSchema,
           onSubmit: () => {},
         }}
       >
         <PostFormHeader
-          pageTitle={CREATE_POST_TITLE}
+          pageTitle={t("posts.createTitle")}
           showMoreActions={false}
           onSubmitWithStatus={handleSubmitWithStatus}
         />
@@ -71,4 +73,4 @@ const Create = () => {
   );
 };
 
-export default withTitle(Create, CREATE_POST_TITLE);
+export default withTitle(Create, "posts.createTitle");

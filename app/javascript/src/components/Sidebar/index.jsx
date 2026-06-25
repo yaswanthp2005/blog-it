@@ -1,6 +1,6 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import authApi from "apis/auth";
 import { resetAuthTokens } from "apis/axios";
@@ -16,38 +16,46 @@ import {
 } from "neetoicons";
 import { Button, Dropdown, Typography } from "neetoui";
 import PropTypes from "prop-types";
+import { useTranslation } from "react-i18next";
 import { useLocation } from "react-router-dom";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
-const NAV_ITEMS = [
-  {
-    label: "Blog Posts",
-    path: routes.posts.index,
-    icon: Book,
-    isActive: pathname =>
-      pathname === routes.posts.index || pathname.includes("/show"),
-  },
-  {
-    label: "New blog post",
-    path: routes.posts.create,
-    icon: Edit,
-    isActive: pathname =>
-      pathname === routes.posts.create || pathname.includes("/edit"),
-  },
-];
-
-const MY_BLOG_POSTS_ITEM = {
-  label: "My blog posts",
-  path: routes.posts.mine,
-  icon: File,
-  isActive: pathname => pathname === routes.posts.mine,
-};
-
 const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
   const location = useLocation();
+  const { t } = useTranslation();
   const isCategoryEnabled = location.pathname === routes.posts.index;
   const userName = getFromLocalStorage("authUserName");
   const userEmail = getFromLocalStorage("authEmail");
+
+  const navItems = useMemo(
+    () => [
+      {
+        label: t("sidebar.blogPosts"),
+        path: routes.posts.index,
+        icon: Book,
+        isActive: pathname =>
+          pathname === routes.posts.index || pathname.includes("/show"),
+      },
+      {
+        label: t("sidebar.newBlogPost"),
+        path: routes.posts.create,
+        icon: Edit,
+        isActive: pathname =>
+          pathname === routes.posts.create || pathname.includes("/edit"),
+      },
+    ],
+    [t]
+  );
+
+  const myBlogPostsItem = useMemo(
+    () => ({
+      label: t("sidebar.myBlogPosts"),
+      path: routes.posts.mine,
+      icon: File,
+      isActive: pathname => pathname === routes.posts.mine,
+    }),
+    [t]
+  );
 
   const handleLogout = async () => {
     try {
@@ -88,10 +96,14 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
   const renderUserMenu = () => (
     <div className="w-56 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
       <div className="flex items-center gap-x-2 p-3">
-        <Avvvatars size={28} style="character" value={userName || "User"} />
+        <Avvvatars
+          size={28}
+          style="character"
+          value={userName || t("common.user")}
+        />
         <div>
           <Typography className="text-gray-900" style="body2" weight="semibold">
-            {userName || "User"}
+            {userName || t("common.user")}
           </Typography>
           <Typography className="text-gray-500" style="body3" weight="normal">
             {userEmail || "-"}
@@ -106,7 +118,7 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
           style="danger-text"
           onClick={handleLogout}
         >
-          Logout
+          {t("sidebar.logout")}
         </Dropdown.MenuItem.Button>
       </Dropdown.Menu>
     </div>
@@ -116,7 +128,7 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
     <aside className="flex w-16 flex-shrink-0 flex-col justify-between border-r border-gray-200 bg-white py-4">
       <div className="flex flex-col items-center gap-y-4 px-2">
         <nav className="flex flex-col items-center gap-y-3">
-          {renderNavItem({ ...NAV_ITEMS[0], onClick: onBookClick })}
+          {renderNavItem({ ...navItems[0], onClick: onBookClick })}
           <Button
             disabled
             className="!pointer-events-none !cursor-not-allowed rounded-lg !text-gray-300 hover:!bg-transparent hover:!text-gray-300"
@@ -124,7 +136,7 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
             iconSize={20}
             style="text"
           />
-          {renderNavItem(NAV_ITEMS[1])}
+          {renderNavItem(navItems[1])}
           <Button
             disabled={!isCategoryEnabled}
             icon={CategoryIcon}
@@ -139,11 +151,13 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
                 !isCategoryEnabled,
             })}
             tooltipProps={
-              isCategoryEnabled ? { content: "Categories" } : undefined
+              isCategoryEnabled
+                ? { content: t("sidebar.categories") }
+                : undefined
             }
             onClick={isCategoryEnabled ? onCategoryClick : undefined}
           />
-          {renderNavItem(MY_BLOG_POSTS_ITEM)}
+          {renderNavItem(myBlogPostsItem)}
         </nav>
       </div>
       <div className="flex justify-center px-2">
@@ -152,7 +166,11 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
           placement="right-end"
           trigger="hover"
           customTarget={
-            <Avvvatars size={32} style="character" value={userName || "User"} />
+            <Avvvatars
+              size={32}
+              style="character"
+              value={userName || t("common.user")}
+            />
           }
           dropdownModifiers={[
             {

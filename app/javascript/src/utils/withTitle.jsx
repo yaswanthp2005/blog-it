@@ -1,16 +1,21 @@
 import React from "react";
 
 import { Helmet } from "react-helmet";
+import { useTranslation } from "react-i18next";
 
-const withTitle = (Component, title) => {
-  const WrappedComponent = props => (
-    <>
-      <Helmet>
-        <title>{title}</title>
-      </Helmet>
-      <Component {...props} />
-    </>
-  );
+const withTitle = (Component, titleKey) => {
+  const WrappedComponent = props => {
+    const { t } = useTranslation();
+
+    return (
+      <>
+        <Helmet>
+          <title>{t(titleKey)}</title>
+        </Helmet>
+        <Component {...props} />
+      </>
+    );
+  };
 
   return WrappedComponent;
 };

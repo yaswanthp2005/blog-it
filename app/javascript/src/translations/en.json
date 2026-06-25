@@ -1,0 +1,99 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "add": "Add",
+    "delete": "Delete",
+    "user": "User",
+    "actions": "Actions",
+    "edit": "Edit",
+    "preview": "Preview",
+    "yesDelete": "Yes, delete",
+    "clearSelection": "Clear selection",
+    "somethingWentWrong": "Something went wrong!"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "orRegisterNow": "Or Register Now",
+    "orLoginNow": "Or Login Now",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "passwordConfirmation": "Password Confirmation",
+    "register": "Register",
+    "loginPageTitle": "Login",
+    "signupPageTitle": "Sign up",
+    "emailPlaceholder": "oliver@example.com",
+    "namePlaceholder": "Oliver",
+    "passwordPlaceholder": "********",
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email",
+      "passwordRequired": "Password is required",
+      "nameRequired": "Name is required",
+      "passwordMin": "Password must be at least 6 characters",
+      "passwordsMustMatch": "Passwords must match",
+      "passwordConfirmationRequired": "Password confirmation is required"
+    }
+  },
+  "sidebar": {
+    "blogPosts": "Blog Posts",
+    "newBlogPost": "New blog post",
+    "myBlogPosts": "My blog posts",
+    "categories": "Categories",
+    "logout": "Logout"
+  },
+  "categories": {
+    "title": "CATEGORIES",
+    "searchCategories": "Search categories",
+    "addCategory": "Add category",
+    "searchPlaceholder": "Search categories",
+    "noCategoriesFound": "No categories found",
+    "newCategory": "New category",
+    "categoryTitle": "Category title",
+    "categoryNamePlaceholder": "Enter category name"
+  },
+  "posts": {
+    "listingTitle": "Blog posts",
+    "myPostsTitle": "My blog posts",
+    "createTitle": "New blog post",
+    "editTitle": "Edit blog post",
+    "showTitle": "Blog post",
+    "addNewBlogPost": "Add new blog post",
+    "noBlogPostsYet": "No blog posts yet",
+    "notFound": "Blog post not found",
+    "unauthorized": "You are not authorized to edit this post",
+    "draft": "Draft",
+    "published": "Published",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "saveAsDraft": "Save as draft",
+    "moreActions": "More actions",
+    "deleteTitle": "Delete blog post",
+    "deleteConfirmMessage": "Are you sure you want to delete <1>{{title}}</1>? This action cannot be undone.",
+    "table": {
+      "title": "Title",
+      "category": "Category",
+      "lastPublishedAt": "Last published at",
+      "status": "Status",
+      "allSelected": "All {{count}} blog posts selected.",
+      "selectAll": "Select all {{count}} blog posts",
+      "selectedOnPage": "{{count}} blog posts selected on this page."
+    },
+    "form": {
+      "title": "Title",
+      "titlePlaceholder": "Enter title",
+      "category": "Category",
+      "categoryPlaceholder": "Search category",
+      "description": "Description",
+      "descriptionPlaceholder": "Enter description"
+    },
+    "validation": {
+      "titleRequired": "Title is required",
+      "titleMax": "Title must be at most 125 characters",
+      "descriptionRequired": "Description is required",
+      "descriptionMax": "Description must be at most {{max}} characters",
+      "categoryRequired": "Select at least one category"
+    }
+  }
+}

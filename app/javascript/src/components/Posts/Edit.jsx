@@ -1,6 +1,6 @@
 import routes from "constants/routes";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import { Container, Toastr } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
@@ -12,17 +12,15 @@ import {
 import { keysToCamelCase } from "neetocist";
 import { Alert, NoData, Spinner } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
+import { Trans, useTranslation } from "react-i18next";
 import { generatePath, useHistory, useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
-import { POST_FORM_VALIDATION_SCHEMA } from "./constants";
+import { getPostFormValidationSchema } from "./constants";
 import Form from "./Form";
 import PostFormHeader from "./PostFormHeader";
 import { buildCategoryIds, buildCategoryOptions } from "./utils";
-
-const EDIT_POST_TITLE = "Edit blog post";
-const UNAUTHORIZED_MESSAGE = "You are not authorized to edit this post";
 
 const buildInitialValues = post => ({
   categoryIds: post.categories.map(category => ({
@@ -36,6 +34,7 @@ const buildInitialValues = post => ({
 const Edit = () => {
   const history = useHistory();
   const { slug } = useParams();
+  const { t } = useTranslation();
   const currentUserId = getFromLocalStorage("authUserId");
   const { data: post, isLoading: isPostLoading } = useShowPost(slug);
   const { data: categories, isLoading: isCategoriesLoading } =
@@ -45,15 +44,17 @@ const Edit = () => {
   const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
+  const validationSchema = useMemo(() => getPostFormValidationSchema(t), [t]);
+
   const normalizedPost = post ? keysToCamelCase(post) : null;
   const isUnauthorized =
     normalizedPost && normalizedPost.userId !== currentUserId;
 
   useEffect(() => {
     if (isUnauthorized) {
-      Toastr.error(UNAUTHORIZED_MESSAGE);
+      Toastr.error(t("posts.unauthorized"));
     }
-  }, [isUnauthorized]);
+  }, [isUnauthorized, t]);
 
   const categoryOptions = buildCategoryOptions(
     categories?.map(keysToCamelCase)
@@ -104,7 +105,7 @@ const Edit = () => {
   if (!post) {
     return (
       <Container>
-        <NoData title="Blog post not found" />
+        <NoData title={t("posts.notFound")} />
       </Container>
     );
   }
@@ -112,7 +113,7 @@ const Edit = () => {
   if (isUnauthorized) {
     return (
       <Container>
-        <NoData title={UNAUTHORIZED_MESSAGE} />
+        <NoData title={t("posts.unauthorized")} />
       </Container>
     );
   }
@@ -123,14 +124,14 @@ const Edit = () => {
         formikProps={{
           enableReinitialize: true,
           initialValues: buildInitialValues(normalizedPost),
-          validationSchema: POST_FORM_VALIDATION_SCHEMA,
+          validationSchema,
           onSubmit: () => {},
         }}
       >
         <PostFormHeader
           showPreview
           defaultPrimaryAction={normalizedPost.status}
-          pageTitle={EDIT_POST_TITLE}
+          pageTitle={t("posts.editTitle")}
           onDelete={() => setIsDeleteAlertOpen(true)}
           onPreview={handlePreview}
           onSubmitWithStatus={handleSubmitWithStatus}
@@ -140,14 +141,14 @@ const Edit = () => {
       <Alert
         isOpen={isDeleteAlertOpen}
         isSubmitting={isDeleting}
-        submitButtonLabel="Yes, delete"
-        title="Delete blog post"
+        submitButtonLabel={t("common.yesDelete")}
+        title={t("posts.deleteTitle")}
         message={
-          <>
-            Are you sure you want to delete{" "}
-            <strong>{normalizedPost.title}</strong>? This action cannot be
-            undone.
-          </>
+          <Trans
+            components={{ 1: <strong /> }}
+            i18nKey="posts.deleteConfirmMessage"
+            values={{ title: normalizedPost.title }}
+          />
         }
         onClose={() => setIsDeleteAlertOpen(false)}
         onSubmit={handleDelete}
@@ -156,4 +157,4 @@ const Edit = () => {
   );
 };
 
-export default withTitle(Edit, EDIT_POST_TITLE);
+export default withTitle(Edit, "posts.editTitle");

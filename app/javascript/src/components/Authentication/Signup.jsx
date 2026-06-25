@@ -1,11 +1,12 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useMemo } from "react";
 
 import authApi from "apis/auth";
 import { User } from "neetoicons";
 import { Button, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
+import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
 import * as Yup from "yup";
@@ -17,21 +18,29 @@ const SIGNUP_FORM_INITIAL_VALUES = {
   passwordConfirmation: "",
 };
 
-const SIGNUP_FORM_VALIDATION_SCHEMA = Yup.object({
-  name: Yup.string().required("Name is required"),
-  email: Yup.string()
-    .email("Enter a valid email")
-    .required("Email is required"),
-  password: Yup.string()
-    .min(6, "Password must be at least 6 characters")
-    .required("Password is required"),
-  passwordConfirmation: Yup.string()
-    .oneOf([Yup.ref("password"), null], "Passwords must match")
-    .required("Password confirmation is required"),
-});
-
 const Signup = () => {
   const history = useHistory();
+  const { t } = useTranslation();
+
+  const signupFormValidationSchema = useMemo(
+    () =>
+      Yup.object({
+        name: Yup.string().required(t("auth.validation.nameRequired")),
+        email: Yup.string()
+          .email(t("auth.validation.emailInvalid"))
+          .required(t("auth.validation.emailRequired")),
+        password: Yup.string()
+          .min(6, t("auth.validation.passwordMin"))
+          .required(t("auth.validation.passwordRequired")),
+        passwordConfirmation: Yup.string()
+          .oneOf(
+            [Yup.ref("password"), null],
+            t("auth.validation.passwordsMustMatch")
+          )
+          .required(t("auth.validation.passwordConfirmationRequired")),
+      }),
+    [t]
+  );
 
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
@@ -55,7 +64,7 @@ const Signup = () => {
         <div className="mb-6 flex items-center justify-center gap-x-2 text-gray-900">
           <User size={22} />
           <Typography style="h2" weight="semibold">
-            Sign Up
+            {t("auth.signUp")}
           </Typography>
         </div>
         <div className="mb-6 text-center">
@@ -63,39 +72,43 @@ const Signup = () => {
             className="text-sm font-medium text-gray-900 underline hover:text-black"
             to={routes.login}
           >
-            Or Login Now
+            {t("auth.orLoginNow")}
           </Link>
         </div>
         <NeetoUIForm
           formikProps={{
             initialValues: SIGNUP_FORM_INITIAL_VALUES,
-            validationSchema: SIGNUP_FORM_VALIDATION_SCHEMA,
+            validationSchema: signupFormValidationSchema,
             onSubmit: handleSubmit,
           }}
         >
           <div className="flex flex-col gap-y-4">
-            <Input label="Name" name="name" placeholder="Oliver" />
             <Input
-              label="Email"
+              label={t("auth.name")}
+              name="name"
+              placeholder={t("auth.namePlaceholder")}
+            />
+            <Input
+              label={t("auth.email")}
               name="email"
-              placeholder="oliver@example.com"
+              placeholder={t("auth.emailPlaceholder")}
               type="email"
             />
             <Input
-              label="Password"
+              label={t("auth.password")}
               name="password"
-              placeholder="********"
+              placeholder={t("auth.passwordPlaceholder")}
               type="password"
             />
             <Input
-              label="Password Confirmation"
+              label={t("auth.passwordConfirmation")}
               name="passwordConfirmation"
-              placeholder="********"
+              placeholder={t("auth.passwordPlaceholder")}
               type="password"
             />
             <Button
               className="!justify-center !bg-gray-900 hover:!bg-black"
-              label="Register"
+              label={t("auth.register")}
               type="submit"
             />
           </div>
@@ -105,4 +118,4 @@ const Signup = () => {
   );
 };
 
-export default withTitle(Signup, "Sign up");
+export default withTitle(Signup, "auth.signupPageTitle");

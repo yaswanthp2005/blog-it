@@ -13,29 +13,30 @@ const POST_FORM_INITIAL_VALUES = {
   description: "",
 };
 
-const POST_FORM_VALIDATION_SCHEMA = Yup.object({
-  title: Yup.string()
-    .required("Title is required")
-    .max(125, "Title must be at most 125 characters"),
-  description: Yup.string()
-    .required("Description is required")
-    .max(
-      MAX_DESCRIPTION_LENGTH,
-      `Description must be at most ${MAX_DESCRIPTION_LENGTH} characters`
-    ),
-  categoryIds: Yup.array()
-    .of(
-      Yup.object({
-        label: Yup.string().required(),
-        value: Yup.mixed().required(),
-      })
-    )
-    .min(1, "Select at least one category"),
-});
+const getPostFormValidationSchema = t =>
+  Yup.object({
+    title: Yup.string()
+      .required(t("posts.validation.titleRequired"))
+      .max(125, t("posts.validation.titleMax")),
+    description: Yup.string()
+      .required(t("posts.validation.descriptionRequired"))
+      .max(
+        MAX_DESCRIPTION_LENGTH,
+        t("posts.validation.descriptionMax", { max: MAX_DESCRIPTION_LENGTH })
+      ),
+    categoryIds: Yup.array()
+      .of(
+        Yup.object({
+          label: Yup.string().required(),
+          value: Yup.mixed().required(),
+        })
+      )
+      .min(1, t("posts.validation.categoryRequired")),
+  });
 
 export {
+  getPostFormValidationSchema,
   MAX_DESCRIPTION_LENGTH,
   POST_FORM_INITIAL_VALUES,
-  POST_FORM_VALIDATION_SCHEMA,
   POST_STATUSES,
 };
