@@ -30,6 +30,7 @@ const Login = () => {
       setToLocalStorage({
         authToken: response.data.authentication_token,
         email: response.data.email,
+        userId: response.data.id,
         userName: response.data.name,
       });
       setAuthHeaders();

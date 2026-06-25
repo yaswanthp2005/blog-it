@@ -4,6 +4,8 @@ class Post < ApplicationRecord
   MAX_TITLE_LENGTH = 125
   MAX_DESCRIPTION_LENGTH = 10000
 
+  enum :status, { draft: "draft", published: "published" }, default: :draft
+
   belongs_to :organization
   belongs_to :user
 
@@ -18,8 +20,17 @@ class Post < ApplicationRecord
   validate :slug_not_changed
 
   before_create :set_slug
+  before_save :set_last_published_at, if: :publishing?
 
   private
+
+    def publishing?
+      status_changed? && published?
+    end
+
+    def set_last_published_at
+      self.last_published_at = Time.current
+    end
 
     def set_slug
       title_slug = title.parameterize

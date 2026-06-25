@@ -1,20 +1,27 @@
+import routes from "constants/routes";
+
 import React from "react";
 
 import Avvvatars from "avvvatars-react";
 import { Container } from "components/commons";
 import { useShowPost } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
-import { NoData, Tag, Spinner, Typography } from "neetoui";
-import { useParams } from "react-router-dom";
+import { Edit } from "neetoicons";
+import { Button, NoData, Spinner, Tag, Typography } from "neetoui";
+import { generatePath, useHistory, useParams } from "react-router-dom";
+import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
-import { formatCreatedAt } from "./utils";
+import { POST_STATUSES } from "./constants";
+import { formatPublishedDate } from "./utils";
 
 const SHOW_POST_TITLE = "Blog post";
 
 const Show = () => {
+  const history = useHistory();
   const { slug } = useParams();
   const { data: post, isLoading } = useShowPost(slug);
+  const currentUserId = getFromLocalStorage("authUserId");
 
   if (isLoading) {
     return (
@@ -34,8 +41,22 @@ const Show = () => {
     );
   }
 
-  const { authorName, categories, createdAt, description, title } =
-    keysToCamelCase(post);
+  const {
+    authorName,
+    categories,
+    description,
+    lastPublishedAt,
+    status,
+    title,
+    userId,
+  } = keysToCamelCase(post);
+
+  const isOwnPost = userId === currentUserId;
+  const isDraft = status === POST_STATUSES.DRAFT;
+
+  const handleEdit = () => {
+    history.push(generatePath(routes.posts.edit, { slug }));
+  };
 
   return (
     <Container>
@@ -51,9 +72,31 @@ const Show = () => {
             />
           ))}
         </div>
-        <Typography className="mb-6 text-gray-900" style="h1" weight="semibold">
-          {title}
-        </Typography>
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
+            <Typography className="text-gray-900" style="h1" weight="semibold">
+              {title}
+            </Typography>
+            {isDraft && (
+              <Tag
+                className="!border-red-300 !bg-white !text-red-600"
+                label="Draft"
+                style="default"
+                type="outline"
+              />
+            )}
+          </div>
+          {isOwnPost && (
+            <Button
+              className="flex-shrink-0"
+              icon={Edit}
+              iconSize={20}
+              style="text"
+              tooltipProps={{ content: "Edit" }}
+              onClick={handleEdit}
+            />
+          )}
+        </div>
         <div className="mb-10 flex items-center gap-x-3">
           <Avvvatars size={44} style="character" value={authorName} />
           <div>
@@ -64,9 +107,15 @@ const Show = () => {
             >
               {authorName}
             </Typography>
-            <Typography className="text-gray-500" style="body3" weight="normal">
-              {formatCreatedAt(createdAt)}
-            </Typography>
+            {lastPublishedAt && (
+              <Typography
+                className="text-gray-500"
+                style="body3"
+                weight="normal"
+              >
+                {formatPublishedDate(lastPublishedAt)}
+              </Typography>
+            )}
           </div>
         </div>
         <Typography

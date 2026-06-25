@@ -10,6 +10,7 @@ import {
   Book,
   Category as CategoryIcon,
   Edit,
+  File,
   Logout,
   MenuHorizontal,
 } from "neetoicons";
@@ -30,18 +31,20 @@ const NAV_ITEMS = [
     label: "New blog post",
     path: routes.posts.create,
     icon: Edit,
-    isActive: pathname => pathname === routes.posts.create,
+    isActive: pathname =>
+      pathname === routes.posts.create || pathname.includes("/edit"),
   },
 ];
 
-const Sidebar = ({
-  isCategoriesOpen,
-  onBookClick,
-  onCategoryClick,
-  showCategoryIcon,
-}) => {
+const MY_BLOG_POSTS_ITEM = {
+  label: "My blog posts",
+  path: routes.posts.mine,
+  icon: File,
+  isActive: pathname => pathname === routes.posts.mine,
+};
+
+const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
   const location = useLocation();
-  const isPostsPageActive = location.pathname === routes.posts.index;
   const userName = getFromLocalStorage("authUserName");
   const userEmail = getFromLocalStorage("authEmail");
 
@@ -51,6 +54,7 @@ const Sidebar = ({
       setToLocalStorage({
         authToken: null,
         email: null,
+        userId: null,
         userName: null,
       });
       resetAuthTokens();
@@ -119,19 +123,18 @@ const Sidebar = ({
             tooltipProps={{ content: "Menu" }}
           />
           {renderNavItem(NAV_ITEMS[1])}
-          {showCategoryIcon && isPostsPageActive && (
-            <Button
-              icon={CategoryIcon}
-              iconSize={20}
-              style="text"
-              tooltipProps={{ content: "Categories" }}
-              className={classnames("rounded-lg", {
-                "!bg-primary-800 !text-white": isCategoriesOpen,
-                "!text-gray-400 hover:!bg-gray-100": !isCategoriesOpen,
-              })}
-              onClick={onCategoryClick}
-            />
-          )}
+          <Button
+            icon={CategoryIcon}
+            iconSize={20}
+            style="text"
+            tooltipProps={{ content: "Categories" }}
+            className={classnames("rounded-lg", {
+              "!bg-primary-800 !text-white": isCategoriesOpen,
+              "!text-gray-400 hover:!bg-gray-100": !isCategoriesOpen,
+            })}
+            onClick={onCategoryClick}
+          />
+          {renderNavItem(MY_BLOG_POSTS_ITEM)}
         </nav>
       </div>
       <div className="flex justify-center px-2">
@@ -160,14 +163,12 @@ Sidebar.propTypes = {
   isCategoriesOpen: PropTypes.bool,
   onBookClick: PropTypes.func,
   onCategoryClick: PropTypes.func,
-  showCategoryIcon: PropTypes.bool,
 };
 
 Sidebar.defaultProps = {
   isCategoriesOpen: false,
   onBookClick: () => {},
   onCategoryClick: () => {},
-  showCategoryIcon: false,
 };
 
 export default Sidebar;

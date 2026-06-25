@@ -6,8 +6,8 @@ import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
 import { useCreatePost } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
-import { Button as NeetoUIButton, Typography, Spinner } from "neetoui";
-import { Button, Form as NeetoUIForm } from "neetoui/formik";
+import { Spinner } from "neetoui";
+import { Form as NeetoUIForm } from "neetoui/formik";
 import { useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
@@ -16,6 +16,8 @@ import {
   POST_FORM_VALIDATION_SCHEMA,
 } from "./constants";
 import Form from "./Form";
+import PostFormHeader from "./PostFormHeader";
+import { buildCategoryIds, buildCategoryOptions } from "./utils";
 
 const CREATE_POST_TITLE = "New blog post";
 
@@ -24,35 +26,32 @@ const Create = () => {
   const { mutateAsync: createPost } = useCreatePost();
   const { data: categories, isLoading } = useFetchCategories();
 
-  const categoryOptions =
-    categories?.map(category => {
-      const normalizedCategory = keysToCamelCase(category);
+  const categoryOptions = buildCategoryOptions(
+    categories?.map(keysToCamelCase)
+  );
 
-      return {
-        label: normalizedCategory.name,
-        value: normalizedCategory.id,
-      };
-    }) || [];
+  const buildPayload = values => ({
+    ...values,
+    categoryIds: buildCategoryIds(values.categoryIds),
+  });
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const handleSubmitWithStatus = async (values, status) => {
     try {
-      const categoryIds = values.categoryIds
-        .map(category => Number.parseInt(category?.value, 10))
-        .filter(Number.isFinite);
-      await createPost({ ...values, categoryIds });
+      const payload = { ...buildPayload(values), status };
+
+      await createPost(payload);
       history.push(routes.posts.index);
     } catch (error) {
       logger.error(error);
-    } finally {
-      setSubmitting(false);
     }
   };
 
+  const handleDelete = () => {
+    history.push(routes.posts.mine);
+  };
+
   return (
-    <Container>
-      <Typography className="mb-8 text-gray-900" style="h2" weight="semibold">
-        {CREATE_POST_TITLE}
-      </Typography>
+    <Container mainClassName="bg-gray-50">
       {isLoading && (
         <div className="mb-6 flex h-24 items-center justify-center">
           <Spinner />
@@ -62,19 +61,15 @@ const Create = () => {
         formikProps={{
           initialValues: POST_FORM_INITIAL_VALUES,
           validationSchema: POST_FORM_VALIDATION_SCHEMA,
-          onSubmit: handleSubmit,
+          onSubmit: () => {},
         }}
       >
-        <Form categoryOptions={categoryOptions}>
-          <div className="flex items-center justify-end gap-x-3">
-            <NeetoUIButton
-              label="Cancel"
-              style="secondary"
-              onClick={() => history.push(routes.posts.index)}
-            />
-            <Button label="Submit" type="submit" />
-          </div>
-        </Form>
+        <PostFormHeader
+          pageTitle={CREATE_POST_TITLE}
+          onDelete={handleDelete}
+          onSubmitWithStatus={handleSubmitWithStatus}
+        />
+        <Form categoryOptions={categoryOptions} />
       </NeetoUIForm>
     </Container>
   );

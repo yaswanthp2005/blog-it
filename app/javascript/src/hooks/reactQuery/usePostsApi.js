@@ -13,6 +13,16 @@ export const useFetchPosts = params =>
     },
   });
 
+export const useFetchMyPosts = () =>
+  useQuery({
+    queryKey: [QUERY_KEYS.MY_POSTS],
+    queryFn: async () => {
+      const { data } = await postsApi.fetch({ mine: true });
+
+      return data.posts;
+    },
+  });
+
 export const useShowPost = slug =>
   useQuery({
     queryKey: [QUERY_KEYS.POST, slug],
@@ -29,10 +39,46 @@ export const useCreatePost = () => {
 
   return useMutation({
     mutationFn: async payload => {
-      await postsApi.create(payload);
+      const { data } = await postsApi.create(payload);
+
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries([QUERY_KEYS.POSTS]);
+      queryClient.invalidateQueries([QUERY_KEYS.MY_POSTS]);
+    },
+  });
+};
+
+export const useUpdatePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async payload => {
+      const { data } = await postsApi.update(payload);
+
+      return data;
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries([QUERY_KEYS.POSTS]);
+      queryClient.invalidateQueries([QUERY_KEYS.MY_POSTS]);
+      queryClient.invalidateQueries([QUERY_KEYS.POST, variables.slug]);
+    },
+  });
+};
+
+export const useDestroyPost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async payload => {
+      const { data } = await postsApi.destroy(payload);
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([QUERY_KEYS.POSTS]);
+      queryClient.invalidateQueries([QUERY_KEYS.MY_POSTS]);
     },
   });
 };

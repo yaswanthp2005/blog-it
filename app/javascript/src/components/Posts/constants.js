@@ -1,5 +1,12 @@
 import * as Yup from "yup";
 
+const POST_STATUSES = {
+  DRAFT: "draft",
+  PUBLISHED: "published",
+};
+
+const MAX_DESCRIPTION_LENGTH = 1000;
+
 const POST_FORM_INITIAL_VALUES = {
   categoryIds: [],
   title: "",
@@ -12,7 +19,10 @@ const POST_FORM_VALIDATION_SCHEMA = Yup.object({
     .max(125, "Title must be at most 125 characters"),
   description: Yup.string()
     .required("Description is required")
-    .max(10000, "Description must be at most 10000 characters"),
+    .max(
+      MAX_DESCRIPTION_LENGTH,
+      `Description must be at most ${MAX_DESCRIPTION_LENGTH} characters`
+    ),
   categoryIds: Yup.array()
     .of(
       Yup.object({
@@ -23,4 +33,9 @@ const POST_FORM_VALIDATION_SCHEMA = Yup.object({
     .min(1, "Select at least one category"),
 });
 
-export { POST_FORM_INITIAL_VALUES, POST_FORM_VALIDATION_SCHEMA };
+export {
+  MAX_DESCRIPTION_LENGTH,
+  POST_FORM_INITIAL_VALUES,
+  POST_FORM_VALIDATION_SCHEMA,
+  POST_STATUSES,
+};

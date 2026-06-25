@@ -62,7 +62,6 @@ const Posts = () => {
 
   return (
     <Container
-      showCategoryIcon
       isCategoriesOpen={isCategoriesOpen}
       leftSidebar={
         <CategoriesSidebar

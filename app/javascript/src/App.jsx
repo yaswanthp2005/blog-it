@@ -6,6 +6,8 @@ import { Login, Signup } from "components/Authentication";
 import { PrivateRoute } from "components/commons";
 import Posts from "components/Posts";
 import CreatePost from "components/Posts/Create";
+import EditPost from "components/Posts/Edit";
+import MyPosts from "components/Posts/MyPosts";
 import ShowPost from "components/Posts/Show";
 import { QueryClientProvider } from "react-query";
 import {
@@ -41,6 +43,20 @@ const App = () => {
             component={CreatePost}
             condition={isLoggedIn}
             path={routes.posts.create}
+            redirectRoute={routes.login}
+          />
+          <PrivateRoute
+            exact
+            component={EditPost}
+            condition={isLoggedIn}
+            path={routes.posts.edit}
+            redirectRoute={routes.login}
+          />
+          <PrivateRoute
+            exact
+            component={MyPosts}
+            condition={isLoggedIn}
+            path={routes.posts.mine}
             redirectRoute={routes.login}
           />
           <PrivateRoute

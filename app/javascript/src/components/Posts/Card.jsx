@@ -6,9 +6,11 @@ import { Tag, Typography } from "neetoui";
 import PropTypes from "prop-types";
 import { Link, generatePath } from "react-router-dom";
 
-import { formatCreatedAt } from "./utils";
+import { formatPublishedDate } from "./utils";
 
-const Card = ({ post: { authorName, categories, createdAt, slug, title } }) => (
+const Card = ({
+  post: { authorName, categories, lastPublishedAt, slug, title },
+}) => (
   <article className="border-b border-gray-200 py-6">
     <Link to={generatePath(routes.posts.show, { slug })}>
       <Typography
@@ -34,9 +36,11 @@ const Card = ({ post: { authorName, categories, createdAt, slug, title } }) => (
       <Typography className="text-gray-700" style="body3" weight="semibold">
         {authorName}
       </Typography>
-      <Typography className="text-gray-500" style="body3" weight="normal">
-        {formatCreatedAt(createdAt)}
-      </Typography>
+      {lastPublishedAt && (
+        <Typography className="text-gray-500" style="body3" weight="normal">
+          {formatPublishedDate(lastPublishedAt)}
+        </Typography>
+      )}
     </div>
   </article>
 );
@@ -50,9 +54,9 @@ Card.propTypes = {
         name: PropTypes.string.isRequired,
       })
     ).isRequired,
+    lastPublishedAt: PropTypes.string,
     slug: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
-    createdAt: PropTypes.string.isRequired,
   }).isRequired,
 };
 
