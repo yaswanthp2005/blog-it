@@ -11,6 +11,7 @@ class User < ApplicationRecord
   has_many :posts, dependent: :restrict_with_exception
 
   has_secure_password
+  has_secure_token :authentication_token
 
   validates :name, presence: true, length: { maximum: MAX_NAME_LENGTH }
   validates :email, presence: true,

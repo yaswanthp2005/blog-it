@@ -2,6 +2,8 @@ import routes from "constants/routes";
 
 import React from "react";
 
+import { Login, Signup } from "components/Authentication";
+import { PrivateRoute } from "components/commons";
 import Posts from "components/Posts";
 import CreatePost from "components/Posts/Create";
 import ShowPost from "components/Posts/Show";
@@ -14,20 +16,46 @@ import {
 } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import queryClient from "utils/queryClient";
+import { getFromLocalStorage } from "utils/storage";
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <Router>
-      <ToastContainer />
-      <Switch>
-        <Route exact component={Posts} path={routes.posts.index} />
-        <Route exact component={CreatePost} path={routes.posts.create} />
-        <Route exact component={ShowPost} path={routes.posts.show} />
-        <Redirect exact from={routes.root} to={routes.posts.index} />
-        <Redirect to={routes.posts.index} />
-      </Switch>
-    </Router>
-  </QueryClientProvider>
-);
+const App = () => {
+  const authToken = getFromLocalStorage("authToken");
+  const isLoggedIn = Boolean(authToken);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <ToastContainer />
+        <Switch>
+          <Route exact component={Login} path={routes.login} />
+          <Route exact component={Signup} path={routes.signup} />
+          <PrivateRoute
+            exact
+            component={Posts}
+            condition={isLoggedIn}
+            path={routes.posts.index}
+            redirectRoute={routes.login}
+          />
+          <PrivateRoute
+            exact
+            component={CreatePost}
+            condition={isLoggedIn}
+            path={routes.posts.create}
+            redirectRoute={routes.login}
+          />
+          <PrivateRoute
+            exact
+            component={ShowPost}
+            condition={isLoggedIn}
+            path={routes.posts.show}
+            redirectRoute={routes.login}
+          />
+          <Redirect exact from={routes.root} to={routes.posts.index} />
+          <Redirect to={routes.posts.index} />
+        </Switch>
+      </Router>
+    </QueryClientProvider>
+  );
+};
 
 export default App;

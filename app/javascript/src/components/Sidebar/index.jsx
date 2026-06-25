@@ -2,17 +2,21 @@ import routes from "constants/routes";
 
 import React from "react";
 
+import authApi from "apis/auth";
+import { resetAuthTokens } from "apis/axios";
 import Avvvatars from "avvvatars-react";
 import classnames from "classnames";
 import {
   Book,
   Category as CategoryIcon,
   Edit,
+  Logout,
   MenuHorizontal,
 } from "neetoicons";
-import { Button } from "neetoui";
+import { Button, Dropdown, Typography } from "neetoui";
 import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
+import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 const NAV_ITEMS = [
   {
@@ -38,6 +42,23 @@ const Sidebar = ({
 }) => {
   const location = useLocation();
   const isPostsPageActive = location.pathname === routes.posts.index;
+  const userName = getFromLocalStorage("authUserName");
+  const userEmail = getFromLocalStorage("authEmail");
+
+  const handleLogout = async () => {
+    try {
+      await authApi.logout();
+      setToLocalStorage({
+        authToken: null,
+        email: null,
+        userName: null,
+      });
+      resetAuthTokens();
+      window.location.href = routes.login;
+    } catch (error) {
+      logger.error(error);
+    }
+  };
 
   const renderNavItem = ({ label, onClick, path, icon, isActive }) => {
     const active = isActive(location.pathname);
@@ -58,6 +79,32 @@ const Sidebar = ({
       />
     );
   };
+
+  const renderUserMenu = () => (
+    <div className="w-56 overflow-hidden rounded-lg border border-gray-200 bg-white shadow-xl">
+      <div className="flex items-center gap-x-2 p-3">
+        <Avvvatars size={28} style="character" value={userName || "User"} />
+        <div>
+          <Typography className="text-gray-900" style="body2" weight="semibold">
+            {userName || "User"}
+          </Typography>
+          <Typography className="text-gray-500" style="body3" weight="normal">
+            {userEmail || "-"}
+          </Typography>
+        </div>
+      </div>
+      <div className="border-t border-gray-200" />
+      <Dropdown.Menu>
+        <Dropdown.MenuItem.Button
+          className="!w-full !rounded-none"
+          prefix={<Logout size={16} />}
+          onClick={handleLogout}
+        >
+          Logout
+        </Dropdown.MenuItem.Button>
+      </Dropdown.Menu>
+    </div>
+  );
 
   return (
     <aside className="flex w-16 flex-shrink-0 flex-col justify-between border-r border-gray-200 bg-white py-4">
@@ -88,7 +135,22 @@ const Sidebar = ({
         </nav>
       </div>
       <div className="flex justify-center px-2">
-        <Avvvatars size={32} style="character" value="BlogIt User" />
+        <Dropdown
+          closeOnSelect={false}
+          placement="right-end"
+          trigger="hover"
+          customTarget={
+            <Avvvatars size={32} style="character" value={userName || "User"} />
+          }
+          dropdownModifiers={[
+            {
+              name: "offset",
+              options: { offset: [0, 8] },
+            },
+          ]}
+        >
+          {renderUserMenu()}
+        </Dropdown>
       </div>
     </aside>
   );

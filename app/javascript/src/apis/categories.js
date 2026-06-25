@@ -1,9 +1,9 @@
 import axios from "axios";
 
-const fetch = () => axios.get("/categories");
+const fetch = () => axios.get("/categories.json");
 
 const create = payload =>
-  axios.post("/categories", {
+  axios.post("/categories.json", {
     category: payload,
   });
 

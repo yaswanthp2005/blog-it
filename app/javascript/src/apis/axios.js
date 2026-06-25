@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Toastr } from "components/commons";
+import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 const DEFAULT_ERROR_NOTIFICATION = "Something went wrong!";
 
@@ -13,6 +14,19 @@ const setAuthHeaders = () => {
       .querySelector('[name="csrf-token"]')
       .getAttribute("content"),
   };
+
+  const token = getFromLocalStorage("authToken");
+  const email = getFromLocalStorage("authEmail");
+
+  if (token && email) {
+    axios.defaults.headers["X-Auth-Email"] = email;
+    axios.defaults.headers["X-Auth-Token"] = token;
+  }
+};
+
+const resetAuthTokens = () => {
+  delete axios.defaults.headers["X-Auth-Email"];
+  delete axios.defaults.headers["X-Auth-Token"];
 };
 
 const handleSuccessResponse = response => {
@@ -27,6 +41,11 @@ const handleSuccessResponse = response => {
 };
 
 const handleErrorResponse = axiosErrorObject => {
+  if (axiosErrorObject.response?.status === 401) {
+    setToLocalStorage({ authToken: null, email: null, userName: null });
+    resetAuthTokens();
+  }
+
   Toastr.error(
     axiosErrorObject.response?.data?.error || DEFAULT_ERROR_NOTIFICATION
   );
@@ -40,4 +59,4 @@ const registerIntercepts = () => {
   );
 };
 
-export { setAuthHeaders, registerIntercepts };
+export { resetAuthTokens, setAuthHeaders, registerIntercepts };
