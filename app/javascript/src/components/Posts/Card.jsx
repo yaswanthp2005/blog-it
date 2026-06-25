@@ -1,15 +1,24 @@
+import routes from "constants/routes";
+
 import React from "react";
 
 import { Typography } from "neetoui";
 import PropTypes from "prop-types";
+import { Link, generatePath } from "react-router-dom";
 
 import { formatCreatedAt } from "./utils";
 
-const Card = ({ post: { title, description, createdAt } }) => (
+const Card = ({ post: { slug, title, description, createdAt } }) => (
   <article className="border-b border-gray-200 py-6">
-    <Typography className="mb-2 text-gray-900" style="h4" weight="semibold">
-      {title}
-    </Typography>
+    <Link to={generatePath(routes.posts.show, { slug })}>
+      <Typography
+        className="mb-2 text-gray-900 hover:text-primary-800"
+        style="h4"
+        weight="semibold"
+      >
+        {title}
+      </Typography>
+    </Link>
     <Typography
       className="mb-3 line-clamp-2 text-gray-600"
       style="body2"
@@ -25,6 +34,7 @@ const Card = ({ post: { title, description, createdAt } }) => (
 
 Card.propTypes = {
   post: PropTypes.shape({
+    slug: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,

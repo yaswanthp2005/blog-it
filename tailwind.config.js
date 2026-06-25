@@ -4,6 +4,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        primary: {
+          50: "#f9fafb",
+          100: "#f3f4f6",
+          500: "#111827",
+          600: "#1f2937",
+          800: "#111827",
+        },
         "bb-purple": "#5469D4",
         "bb-env": "#F1F5F9",
         "bb-border": "#E4E4E7",

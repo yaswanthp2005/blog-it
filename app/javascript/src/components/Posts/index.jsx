@@ -1,9 +1,12 @@
+import routes from "constants/routes";
+
 import React from "react";
 
 import { Container } from "components/commons";
 import { useFetchPosts } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
-import { NoData, Spinner, Typography } from "neetoui";
+import { Button, NoData, Spinner, Typography } from "neetoui";
+import { Link } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
 import Card from "./Card";
@@ -39,9 +42,14 @@ const Posts = () => {
 
   return (
     <Container>
-      <Typography className="mb-8 text-gray-900" style="h2" weight="semibold">
-        {POSTS_LISTING_TITLE}
-      </Typography>
+      <div className="mb-8 flex items-center justify-between gap-x-4">
+        <Typography className="text-gray-900" style="h2" weight="semibold">
+          {POSTS_LISTING_TITLE}
+        </Typography>
+        <Link to={routes.posts.create}>
+          <Button label="Add new blog post" style="primary" />
+        </Link>
+      </div>
       {renderContent()}
     </Container>
   );

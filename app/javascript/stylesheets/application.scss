@@ -5,3 +5,12 @@
 @import "@bigbinary/neetoui";
 @import url("https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css");
 @import "react-toastify/dist/ReactToastify.min.css";
+
+:root,
+.neeto-ui-theme--light {
+  --neeto-ui-primary-50: 249, 250, 251;
+  --neeto-ui-primary-100: 243, 244, 246;
+  --neeto-ui-primary-500: 17, 24, 39;
+  --neeto-ui-primary-600: 31, 41, 55;
+  --neeto-ui-primary-800: 17, 24, 39;
+}

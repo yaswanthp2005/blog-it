@@ -31,6 +31,7 @@ en:
   hello: "Hello world"
 
 en:
+  successfully_created: "%{entity} was successfully created!"
   post:
     slug:
       immutable: "is immutable!"
