@@ -6,4 +6,5 @@ export const initializeLogger = () => {
   if (process.env.RAILS_ENV === "production") {
     Logger.setLevel(Logger.OFF);
   }
+  window.logger = Logger;
 };

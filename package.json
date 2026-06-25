@@ -77,6 +77,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "5.3.0",
+    "react-toastify": "8.0.2",
     "react_ujs": "3.1.1",
     "sass": "^1.59.3",
     "stream-browserify": "^3.0.0",
