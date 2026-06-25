@@ -6,7 +6,7 @@ import authApi from "apis/auth";
 import { User } from "neetoicons";
 import { Button, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
 import * as Yup from "yup";
 
@@ -59,11 +59,12 @@ const Signup = () => {
           </Typography>
         </div>
         <div className="mb-6 text-center">
-          <Button
-            label="Or Login Now"
-            style="text"
-            onClick={() => history.push(routes.login)}
-          />
+          <Link
+            className="text-sm font-medium text-gray-900 underline hover:text-black"
+            to={routes.login}
+          >
+            Or Login Now
+          </Link>
         </div>
         <NeetoUIForm
           formikProps={{
@@ -93,7 +94,7 @@ const Signup = () => {
               type="password"
             />
             <Button
-              className="!bg-gray-900 hover:!bg-black"
+              className="!justify-center !bg-gray-900 hover:!bg-black"
               label="Register"
               type="submit"
             />

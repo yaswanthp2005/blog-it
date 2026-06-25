@@ -46,10 +46,6 @@ const Create = () => {
     }
   };
 
-  const handleDelete = () => {
-    history.push(routes.posts.mine);
-  };
-
   return (
     <Container mainClassName="bg-gray-50">
       {isLoading && (
@@ -66,7 +62,7 @@ const Create = () => {
       >
         <PostFormHeader
           pageTitle={CREATE_POST_TITLE}
-          onDelete={handleDelete}
+          showMoreActions={false}
           onSubmitWithStatus={handleSubmitWithStatus}
         />
         <Form categoryOptions={categoryOptions} />

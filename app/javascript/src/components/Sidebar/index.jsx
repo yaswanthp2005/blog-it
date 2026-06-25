@@ -45,6 +45,7 @@ const MY_BLOG_POSTS_ITEM = {
 
 const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
   const location = useLocation();
+  const isCategoryEnabled = location.pathname === routes.posts.index;
   const userName = getFromLocalStorage("authUserName");
   const userEmail = getFromLocalStorage("authEmail");
 
@@ -102,6 +103,7 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
         <Dropdown.MenuItem.Button
           className="!w-full !rounded-none"
           prefix={<Logout size={16} />}
+          style="danger-text"
           onClick={handleLogout}
         >
           Logout
@@ -116,23 +118,30 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
         <nav className="flex flex-col items-center gap-y-3">
           {renderNavItem({ ...NAV_ITEMS[0], onClick: onBookClick })}
           <Button
-            className="!text-gray-400 hover:!bg-gray-100"
+            disabled
+            className="!pointer-events-none !cursor-not-allowed rounded-lg !text-gray-300 hover:!bg-transparent hover:!text-gray-300"
             icon={MenuHorizontal}
             iconSize={20}
             style="text"
-            tooltipProps={{ content: "Menu" }}
           />
           {renderNavItem(NAV_ITEMS[1])}
           <Button
+            disabled={!isCategoryEnabled}
             icon={CategoryIcon}
             iconSize={20}
             style="text"
-            tooltipProps={{ content: "Categories" }}
             className={classnames("rounded-lg", {
-              "!bg-primary-800 !text-white": isCategoriesOpen,
-              "!text-gray-400 hover:!bg-gray-100": !isCategoriesOpen,
+              "!bg-primary-800 !text-white":
+                isCategoriesOpen && isCategoryEnabled,
+              "!text-gray-400 hover:!bg-gray-100":
+                !isCategoriesOpen && isCategoryEnabled,
+              "!pointer-events-none !cursor-not-allowed !text-gray-300 hover:!bg-transparent hover:!text-gray-300":
+                !isCategoryEnabled,
             })}
-            onClick={onCategoryClick}
+            tooltipProps={
+              isCategoryEnabled ? { content: "Categories" } : undefined
+            }
+            onClick={isCategoryEnabled ? onCategoryClick : undefined}
           />
           {renderNavItem(MY_BLOG_POSTS_ITEM)}
         </nav>

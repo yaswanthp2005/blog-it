@@ -24,7 +24,7 @@ const Card = ({
     <div className="mb-3 flex flex-wrap gap-2">
       {categories.map(category => (
         <Tag
-          className="!border-green-200 !bg-green-100 !text-green-800"
+          className="!border-green-200 !bg-green-100 !text-black"
           key={category.id}
           label={category.name}
           style="success"

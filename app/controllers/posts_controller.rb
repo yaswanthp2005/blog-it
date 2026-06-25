@@ -14,11 +14,14 @@ class PostsController < ApplicationController
       @posts.published
     end
 
-    if params[:category_id].present?
-      @posts = @posts.joins(:categories).where(categories: { id: params[:category_id] })
+    category_ids = Array(params[:category_ids]).compact_blank
+
+    if category_ids.present?
+      matching_post_ids = PostCategory.where(category_id: category_ids).select(:post_id)
+      @posts = @posts.where(id: matching_post_ids)
     end
 
-    @posts = @posts.order(created_at: :desc).distinct
+    @posts = @posts.order(created_at: :desc)
   end
 
   def create

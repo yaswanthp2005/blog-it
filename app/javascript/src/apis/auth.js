@@ -5,7 +5,7 @@ const login = payload =>
     login: payload,
   });
 
-const logout = () => axios.delete("/session.json");
+const logout = () => axios.delete("/session.json?quiet");
 
 const signup = payload =>
   axios.post("/users.json", {

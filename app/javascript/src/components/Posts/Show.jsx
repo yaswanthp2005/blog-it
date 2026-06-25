@@ -64,7 +64,7 @@ const Show = () => {
         <div className="mb-5 flex flex-wrap gap-2">
           {categories.map(category => (
             <Tag
-              className="!border-green-200 !bg-green-100 !text-green-800"
+              className="!border-green-200 !bg-green-100 !text-black"
               key={category.id}
               label={category.name}
               style="success"
@@ -74,7 +74,11 @@ const Show = () => {
         </div>
         <div className="mb-6 flex items-start justify-between gap-4">
           <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
-            <Typography className="text-gray-900" style="h1" weight="semibold">
+            <Typography
+              className="min-w-0 break-words text-gray-900"
+              style="h1"
+              weight="semibold"
+            >
               {title}
             </Typography>
             {isDraft && (

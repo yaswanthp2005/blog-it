@@ -7,7 +7,7 @@ import { setAuthHeaders } from "apis/axios";
 import { Lock } from "neetoicons";
 import { Button, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
-import { useHistory } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { setToLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 import * as Yup from "yup";
@@ -22,8 +22,6 @@ const LOGIN_FORM_VALIDATION_SCHEMA = Yup.object({
 });
 
 const Login = () => {
-  const history = useHistory();
-
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const response = await authApi.login(values);
@@ -52,11 +50,12 @@ const Login = () => {
           </Typography>
         </div>
         <div className="mb-6 text-center">
-          <Button
-            label="Or Register Now"
-            style="text"
-            onClick={() => history.push(routes.signup)}
-          />
+          <Link
+            className="text-sm font-medium text-gray-900 underline hover:text-black"
+            to={routes.signup}
+          >
+            Or Register Now
+          </Link>
         </div>
         <NeetoUIForm
           formikProps={{
@@ -79,7 +78,7 @@ const Login = () => {
               type="password"
             />
             <Button
-              className="!bg-gray-900 hover:!bg-black"
+              className="!justify-center !bg-gray-900 hover:!bg-black"
               label="Sign In"
               type="submit"
             />

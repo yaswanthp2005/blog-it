@@ -20,11 +20,11 @@ const Posts = () => {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState("");
-  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
   const { mutateAsync: createCategory } = useCreateCategory();
-  const { data: posts, isLoading } = useFetchPosts({
-    category_id: selectedCategoryId,
-  });
+  const { data: posts, isLoading } = useFetchPosts(
+    selectedCategoryIds.length ? { category_ids: selectedCategoryIds } : {}
+  );
 
   const handleCreateCategory = async () => {
     if (!newCategoryName.trim()) {
@@ -66,13 +66,16 @@ const Posts = () => {
       leftSidebar={
         <CategoriesSidebar
           isOpen={isCategoriesOpen}
-          selectedCategoryId={selectedCategoryId}
+          selectedCategoryIds={selectedCategoryIds}
           onAddCategory={() => setIsCategoryModalOpen(true)}
-          onSelectCategory={setSelectedCategoryId}
+          onSelectCategories={setSelectedCategoryIds}
         />
       }
-      onBookClick={() => setIsCategoriesOpen(false)}
       onCategoryClick={() => setIsCategoriesOpen(state => !state)}
+      onBookClick={() => {
+        setIsCategoriesOpen(false);
+        setSelectedCategoryIds([]);
+      }}
     >
       <div className="mb-8 flex items-center justify-between gap-x-4">
         <Typography className="text-gray-900" style="h2" weight="semibold">

@@ -10,8 +10,8 @@ import PropTypes from "prop-types";
 const CategoriesSidebar = ({
   isOpen,
   onAddCategory,
-  onSelectCategory,
-  selectedCategoryId,
+  onSelectCategories,
+  selectedCategoryIds,
 }) => {
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,13 +27,13 @@ const CategoriesSidebar = ({
   );
 
   const handleCategoryClick = categoryId => {
-    if (selectedCategoryId === categoryId) {
-      onSelectCategory(null);
+    if (selectedCategoryIds.includes(categoryId)) {
+      onSelectCategories(selectedCategoryIds.filter(id => id !== categoryId));
 
       return;
     }
 
-    onSelectCategory(categoryId);
+    onSelectCategories([...selectedCategoryIds, categoryId]);
   };
 
   if (!isOpen) {
@@ -86,9 +86,9 @@ const CategoriesSidebar = ({
               "!justify-start rounded-md border border-black/10 px-3 py-2 text-left text-sm",
               {
                 "!bg-white !text-gray-900 shadow-sm":
-                  selectedCategoryId === category.id,
+                  selectedCategoryIds.includes(category.id),
                 "!bg-gray-200/70 !text-gray-700 hover:!bg-gray-200":
-                  selectedCategoryId !== category.id,
+                  !selectedCategoryIds.includes(category.id),
               }
             )}
             onClick={() => handleCategoryClick(category.id)}
@@ -107,12 +107,12 @@ const CategoriesSidebar = ({
 CategoriesSidebar.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onAddCategory: PropTypes.func.isRequired,
-  onSelectCategory: PropTypes.func.isRequired,
-  selectedCategoryId: PropTypes.number,
+  onSelectCategories: PropTypes.func.isRequired,
+  selectedCategoryIds: PropTypes.arrayOf(PropTypes.number),
 };
 
 CategoriesSidebar.defaultProps = {
-  selectedCategoryId: null,
+  selectedCategoryIds: [],
 };
 
 export default CategoriesSidebar;

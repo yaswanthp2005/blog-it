@@ -1,8 +1,8 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-import { Container } from "components/commons";
+import { Container, Toastr } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
 import {
   useDestroyPost,
@@ -10,7 +10,7 @@ import {
   useUpdatePost,
 } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
-import { NoData, Spinner } from "neetoui";
+import { Alert, NoData, Spinner } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
 import { generatePath, useHistory, useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
@@ -22,6 +22,7 @@ import PostFormHeader from "./PostFormHeader";
 import { buildCategoryIds, buildCategoryOptions } from "./utils";
 
 const EDIT_POST_TITLE = "Edit blog post";
+const UNAUTHORIZED_MESSAGE = "You are not authorized to edit this post";
 
 const buildInitialValues = post => ({
   categoryIds: post.categories.map(category => ({
@@ -41,6 +42,18 @@ const Edit = () => {
     useFetchCategories();
   const { mutateAsync: updatePost } = useUpdatePost();
   const { mutateAsync: destroyPost } = useDestroyPost();
+  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const normalizedPost = post ? keysToCamelCase(post) : null;
+  const isUnauthorized =
+    normalizedPost && normalizedPost.userId !== currentUserId;
+
+  useEffect(() => {
+    if (isUnauthorized) {
+      Toastr.error(UNAUTHORIZED_MESSAGE);
+    }
+  }, [isUnauthorized]);
 
   const categoryOptions = buildCategoryOptions(
     categories?.map(keysToCamelCase)
@@ -67,10 +80,14 @@ const Edit = () => {
 
   const handleDelete = async () => {
     try {
+      setIsDeleting(true);
       await destroyPost({ slug });
+      setIsDeleteAlertOpen(false);
       history.push(routes.posts.mine);
     } catch (error) {
       logger.error(error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -92,12 +109,10 @@ const Edit = () => {
     );
   }
 
-  const normalizedPost = keysToCamelCase(post);
-
-  if (normalizedPost.userId !== currentUserId) {
+  if (isUnauthorized) {
     return (
       <Container>
-        <NoData title="You are not authorized to edit this post" />
+        <NoData title={UNAUTHORIZED_MESSAGE} />
       </Container>
     );
   }
@@ -116,12 +131,27 @@ const Edit = () => {
           showPreview
           defaultPrimaryAction={normalizedPost.status}
           pageTitle={EDIT_POST_TITLE}
-          onDelete={handleDelete}
+          onDelete={() => setIsDeleteAlertOpen(true)}
           onPreview={handlePreview}
           onSubmitWithStatus={handleSubmitWithStatus}
         />
         <Form categoryOptions={categoryOptions} />
       </NeetoUIForm>
+      <Alert
+        isOpen={isDeleteAlertOpen}
+        isSubmitting={isDeleting}
+        submitButtonLabel="Yes, delete"
+        title="Delete blog post"
+        message={
+          <>
+            Are you sure you want to delete{" "}
+            <strong>{normalizedPost.title}</strong>? This action cannot be
+            undone.
+          </>
+        }
+        onClose={() => setIsDeleteAlertOpen(false)}
+        onSubmit={handleDelete}
+      />
     </Container>
   );
 };

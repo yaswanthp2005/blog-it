@@ -3,7 +3,7 @@ import routes from "constants/routes";
 import React, { useEffect, useState } from "react";
 
 import { useFormikContext } from "formik";
-import { Check, ExternalLink, MenuHorizontal } from "neetoicons";
+import { Check, MenuHorizontal, UpArrow } from "neetoicons";
 import { ActionDropdown, Button, Dropdown, Typography } from "neetoui";
 import PropTypes from "prop-types";
 import { useHistory } from "react-router-dom";
@@ -122,8 +122,7 @@ const PostFormHeader = ({
       <div className="flex items-center gap-x-3">
         {showPreview && (
           <Button
-            icon={ExternalLink}
-            iconSize={20}
+            icon={() => <UpArrow className="rotate-45" size={20} />}
             style="text"
             tooltipProps={{ content: "Preview" }}
             onClick={onPreview}

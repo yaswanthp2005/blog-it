@@ -1,6 +1,6 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 
 import { Container } from "components/commons";
 import {
@@ -11,10 +11,11 @@ import {
 import { keysToCamelCase } from "neetocist";
 import { MenuHorizontal } from "neetoicons";
 import {
+  Alert,
   Button,
   Dropdown,
   NoData,
-  Spinner,
+  Table,
   Tooltip,
   Typography,
 } from "neetoui";
@@ -26,11 +27,16 @@ import { capitalizeStatus, formatMyPostsDateTime } from "./utils";
 
 const MY_POSTS_TITLE = "My blog posts";
 const TITLE_MAX_LENGTH = 50;
+const DEFAULT_PAGE_SIZE = 10;
 
 const MyPosts = () => {
   const { data: posts, isLoading } = useFetchMyPosts();
   const { mutateAsync: updatePost } = useUpdatePost();
   const { mutateAsync: destroyPost } = useDestroyPost();
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [bulkSelectedAllRows, setBulkSelectedAllRows] = useState(false);
+  const [postToDelete, setPostToDelete] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleStatusChange = async (slug, status) => {
     try {
@@ -40,11 +46,19 @@ const MyPosts = () => {
     }
   };
 
-  const handleDelete = async slug => {
+  const handleDelete = async () => {
+    if (!postToDelete) {
+      return;
+    }
+
     try {
-      await destroyPost({ quiet: true, slug });
+      setIsDeleting(true);
+      await destroyPost({ quiet: true, slug: postToDelete.slug });
+      setPostToDelete(null);
     } catch (error) {
       logger.error(error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -73,6 +87,8 @@ const MyPosts = () => {
     return (
       <Dropdown
         buttonStyle="text"
+        dropdownProps={{ appendTo: () => document.body }}
+        strategy="fixed"
         customTarget={
           <Button
             icon={MenuHorizontal}
@@ -100,7 +116,7 @@ const MyPosts = () => {
           )}
           <Dropdown.MenuItem.Button
             style="danger"
-            onClick={() => handleDelete(post.slug)}
+            onClick={() => setPostToDelete(post)}
           >
             Delete
           </Dropdown.MenuItem.Button>
@@ -109,68 +125,85 @@ const MyPosts = () => {
     );
   };
 
-  const renderContent = () => {
-    if (isLoading) {
-      return (
-        <div className="flex h-64 items-center justify-center">
-          <Spinner />
-        </div>
-      );
-    }
+  const columnData = [
+    {
+      title: "Title",
+      dataIndex: "title",
+      key: "title",
+      ellipsis: false,
+      render: (title, post) => (
+        <Link to={generatePath(routes.posts.edit, { slug: post.slug })}>
+          {renderTitle(title)}
+        </Link>
+      ),
+    },
+    {
+      title: "Category",
+      dataIndex: "categories",
+      key: "category",
+      render: categories =>
+        categories.map(category => category.name).join(", "),
+    },
+    {
+      title: "Last published at",
+      dataIndex: "lastPublishedAt",
+      key: "lastPublishedAt",
+      render: (_, post) => formatMyPostsDateTime(post),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      render: status => capitalizeStatus(status),
+    },
+    {
+      dataIndex: "actions",
+      fixed: "right",
+      key: "actions",
+      align: "center",
+      width: 80,
+      render: (_, post) => renderActions(post),
+    },
+  ];
 
-    if (!posts?.length) {
+  const rowData = useMemo(
+    () => (posts ? posts.map(keysToCamelCase) : []),
+    [posts]
+  );
+
+  const totalCount = rowData.length;
+  const selectedCount = bulkSelectedAllRows
+    ? totalCount
+    : selectedRowKeys.length;
+
+  const renderContent = () => {
+    if (!isLoading && !posts?.length) {
       return <NoData title="No blog posts yet" />;
     }
 
-    const normalizedPosts = posts.map(keysToCamelCase);
-
     return (
-      <div className="inline-block min-w-full">
-        <table className="min-w-full border-collapse border border-gray-300">
-          <thead>
-            <tr>
-              <th className="border-b border-r border-gray-300 bg-gray-100 px-4 py-2.5 text-left text-xs font-bold uppercase leading-4 text-gray-800">
-                Title
-              </th>
-              <th className="border-b border-r border-gray-300 bg-gray-100 px-4 py-2.5 text-left text-xs font-bold uppercase leading-4 text-gray-800">
-                Category
-              </th>
-              <th className="border-b border-r border-gray-300 bg-gray-100 px-4 py-2.5 text-left text-xs font-bold uppercase leading-4 text-gray-800">
-                Last published at
-              </th>
-              <th className="border-b border-r border-gray-300 bg-gray-100 px-4 py-2.5 text-left text-xs font-bold uppercase leading-4 text-gray-800">
-                Status
-              </th>
-              <th className="border-b border-gray-300 bg-gray-100 px-4 py-2.5 text-center text-xs font-bold uppercase leading-4 text-gray-800" />
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {normalizedPosts.map(post => (
-              <tr key={post.id}>
-                <td className="border-r border-gray-300 px-4 py-2.5">
-                  <Link
-                    to={generatePath(routes.posts.show, { slug: post.slug })}
-                  >
-                    {renderTitle(post.title)}
-                  </Link>
-                </td>
-                <td className="border-r border-gray-300 px-4 py-2.5 text-sm text-gray-800">
-                  {post.categories.map(category => category.name).join(", ")}
-                </td>
-                <td className="border-r border-gray-300 px-4 py-2.5 text-sm text-gray-800">
-                  {formatMyPostsDateTime(post)}
-                </td>
-                <td className="border-r border-gray-300 px-4 py-2.5 text-sm text-gray-800">
-                  {capitalizeStatus(post.status)}
-                </td>
-                <td className="px-4 py-2.5 text-center">
-                  {renderActions(post)}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table
+        rowSelection
+        allowRowClick={false}
+        columnData={columnData}
+        defaultPageSize={DEFAULT_PAGE_SIZE}
+        enableColumnFreeze={false}
+        enableColumnReorder={false}
+        enableColumnResize={false}
+        loading={isLoading}
+        rowData={rowData}
+        rowKey="id"
+        selectedRowKeys={selectedRowKeys}
+        totalCount={totalCount}
+        bulkSelectAllRowsProps={{
+          allRowsSelectedMessage: `All ${totalCount} blog posts selected.`,
+          clearSelectionButtonLabel: "Clear selection",
+          selectAllRowButtonLabel: `Select all ${totalCount} blog posts`,
+          selectAllRowMessage: `${selectedCount} blog posts selected on this page.`,
+          setBulkSelectedAllRows,
+        }}
+        onRowSelect={setSelectedRowKeys}
+      />
     );
   };
 
@@ -180,6 +213,21 @@ const MyPosts = () => {
         {MY_POSTS_TITLE}
       </Typography>
       {renderContent()}
+      <Alert
+        isOpen={Boolean(postToDelete)}
+        isSubmitting={isDeleting}
+        submitButtonLabel="Yes, delete"
+        title="Delete blog post"
+        message={
+          <>
+            Are you sure you want to delete{" "}
+            <strong>{postToDelete?.title}</strong>? This action cannot be
+            undone.
+          </>
+        }
+        onClose={() => setPostToDelete(null)}
+        onSubmit={handleDelete}
+      />
     </Container>
   );
 };
