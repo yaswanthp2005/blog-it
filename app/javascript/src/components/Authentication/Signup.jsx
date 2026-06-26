@@ -1,62 +1,23 @@
 import routes from "constants/routes";
 
-import React, { useMemo } from "react";
+import React from "react";
 
-import authApi from "apis/auth";
 import { User } from "neetoicons";
 import { Button, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
 import { useTranslation } from "react-i18next";
 import { Link, useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
-import * as Yup from "yup";
 
-const SIGNUP_FORM_INITIAL_VALUES = {
-  email: "",
-  name: "",
-  password: "",
-  passwordConfirmation: "",
-};
+import {
+  SIGNUP_FORM_INITIAL_VALUES,
+  SIGNUP_FORM_VALIDATION_SCHEMA,
+} from "./constants";
+import { handleSignupSubmit } from "./utils";
 
 const Signup = () => {
   const history = useHistory();
   const { t } = useTranslation();
-
-  const signupFormValidationSchema = useMemo(
-    () =>
-      Yup.object({
-        name: Yup.string().required(t("auth.validation.nameRequired")),
-        email: Yup.string()
-          .email(t("auth.validation.emailInvalid"))
-          .required(t("auth.validation.emailRequired")),
-        password: Yup.string()
-          .min(6, t("auth.validation.passwordMin"))
-          .required(t("auth.validation.passwordRequired")),
-        passwordConfirmation: Yup.string()
-          .oneOf(
-            [Yup.ref("password"), null],
-            t("auth.validation.passwordsMustMatch")
-          )
-          .required(t("auth.validation.passwordConfirmationRequired")),
-      }),
-    [t]
-  );
-
-  const handleSubmit = async (values, { setSubmitting }) => {
-    try {
-      await authApi.signup({
-        email: values.email,
-        name: values.name,
-        password: values.password,
-        password_confirmation: values.passwordConfirmation,
-      });
-      history.push(routes.login);
-    } catch (error) {
-      logger.error(error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -78,8 +39,9 @@ const Signup = () => {
         <NeetoUIForm
           formikProps={{
             initialValues: SIGNUP_FORM_INITIAL_VALUES,
-            validationSchema: signupFormValidationSchema,
-            onSubmit: handleSubmit,
+            validationSchema: SIGNUP_FORM_VALIDATION_SCHEMA,
+            onSubmit: (values, formikHelpers) =>
+              handleSignupSubmit(values, formikHelpers, history),
           }}
         >
           <div className="flex flex-col gap-y-4">

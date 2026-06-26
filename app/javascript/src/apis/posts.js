@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const fetch = params => axios.get("/posts.json", { params });
+const fetch = params => axios.get("/posts", { params });
 
-const show = slug => axios.get(`/posts/${slug}.json`);
+const show = slug => axios.get(`/posts/${slug}`);
 
 const create = ({ categoryIds, status, ...payload }) =>
-  axios.post("/posts.json", {
+  axios.post("/posts", {
     post: {
       ...payload,
       category_ids: categoryIds,
@@ -14,7 +14,7 @@ const create = ({ categoryIds, status, ...payload }) =>
   });
 
 const update = ({ slug, categoryIds, status, quiet = false, ...payload }) => {
-  const path = quiet ? `/posts/${slug}.json?quiet` : `/posts/${slug}.json`;
+  const path = quiet ? `/posts/${slug}?quiet` : `/posts/${slug}`;
 
   return axios.put(path, {
     post: {
@@ -26,7 +26,7 @@ const update = ({ slug, categoryIds, status, quiet = false, ...payload }) => {
 };
 
 const destroy = ({ slug, quiet = false }) => {
-  const path = quiet ? `/posts/${slug}.json?quiet` : `/posts/${slug}.json`;
+  const path = quiet ? `/posts/${slug}?quiet` : `/posts/${slug}`;
 
   return axios.delete(path);
 };

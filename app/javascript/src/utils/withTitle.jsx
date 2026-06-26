@@ -1,23 +1,23 @@
 import React from "react";
 
+import { t } from "i18next";
 import { Helmet } from "react-helmet";
-import { useTranslation } from "react-i18next";
 
-const withTitle = (Component, titleKey) => {
-  const WrappedComponent = props => {
-    const { t } = useTranslation();
+const withTitle = (Component, title) => {
+  const PageTitle = props => {
+    const pageTitle = title ? t("pageTitle", { title: t(title) }) : t("title");
 
     return (
       <>
         <Helmet>
-          <title>{t(titleKey)}</title>
+          <title>{pageTitle}</title>
         </Helmet>
         <Component {...props} />
       </>
     );
   };
 
-  return WrappedComponent;
+  return PageTitle;
 };
 
 export default withTitle;

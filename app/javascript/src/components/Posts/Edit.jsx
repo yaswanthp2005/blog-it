@@ -1,50 +1,38 @@
-import routes from "constants/routes";
-
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect } from "react";
 
 import { Container, Toastr } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
-import {
-  useDestroyPost,
-  useShowPost,
-  useUpdatePost,
-} from "hooks/reactQuery/usePostsApi";
+import { useShowPost } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
 import { Alert, NoData, Spinner } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
 import { Trans, useTranslation } from "react-i18next";
-import { generatePath, useHistory, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
-import { getPostFormValidationSchema } from "./constants";
+import { POST_FORM_VALIDATION_SCHEMA } from "./constants";
 import Form from "./Form";
+import useEditPost from "./hooks/useEditPost";
 import PostFormHeader from "./PostFormHeader";
-import { buildCategoryIds, buildCategoryOptions } from "./utils";
-
-const buildInitialValues = post => ({
-  categoryIds: post.categories.map(category => ({
-    label: category.name,
-    value: category.id,
-  })),
-  description: post.description,
-  title: post.title,
-});
+import { buildCategoryOptions, buildInitialValues } from "./utils";
 
 const Edit = () => {
-  const history = useHistory();
   const { slug } = useParams();
   const { t } = useTranslation();
   const currentUserId = getFromLocalStorage("authUserId");
   const { data: post, isLoading: isPostLoading } = useShowPost(slug);
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchCategories();
-  const { mutateAsync: updatePost } = useUpdatePost();
-  const { mutateAsync: destroyPost } = useDestroyPost();
-  const [isDeleteAlertOpen, setIsDeleteAlertOpen] = useState(false);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  const validationSchema = useMemo(() => getPostFormValidationSchema(t), [t]);
+  const {
+    handleDelete,
+    handlePreview,
+    handleSubmitWithStatus,
+    isDeleteAlertOpen,
+    isDeleting,
+    setIsDeleteAlertOpen,
+  } = useEditPost();
 
   const normalizedPost = post ? keysToCamelCase(post) : null;
   const isUnauthorized =
@@ -59,38 +47,6 @@ const Edit = () => {
   const categoryOptions = buildCategoryOptions(
     categories?.map(keysToCamelCase)
   );
-
-  const handleSubmitWithStatus = async (values, status) => {
-    try {
-      await updatePost({
-        slug,
-        ...values,
-        categoryIds: buildCategoryIds(values.categoryIds),
-        status,
-      });
-
-      history.push(routes.posts.index);
-    } catch (error) {
-      logger.error(error);
-    }
-  };
-
-  const handlePreview = () => {
-    history.push(generatePath(routes.posts.show, { slug }));
-  };
-
-  const handleDelete = async () => {
-    try {
-      setIsDeleting(true);
-      await destroyPost({ slug });
-      setIsDeleteAlertOpen(false);
-      history.push(routes.posts.mine);
-    } catch (error) {
-      logger.error(error);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
 
   if (isPostLoading || isCategoriesLoading) {
     return (
@@ -124,7 +80,7 @@ const Edit = () => {
         formikProps={{
           enableReinitialize: true,
           initialValues: buildInitialValues(normalizedPost),
-          validationSchema,
+          validationSchema: POST_FORM_VALIDATION_SCHEMA,
           onSubmit: () => {},
         }}
       >

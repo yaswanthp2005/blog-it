@@ -1,6 +1,6 @@
 import routes from "constants/routes";
 
-import React, { useMemo } from "react";
+import React from "react";
 
 import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
@@ -13,8 +13,8 @@ import { useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
 import {
-  getPostFormValidationSchema,
   POST_FORM_INITIAL_VALUES,
+  POST_FORM_VALIDATION_SCHEMA,
 } from "./constants";
 import Form from "./Form";
 import PostFormHeader from "./PostFormHeader";
@@ -25,8 +25,6 @@ const Create = () => {
   const { t } = useTranslation();
   const { mutateAsync: createPost } = useCreatePost();
   const { data: categories, isLoading } = useFetchCategories();
-
-  const validationSchema = useMemo(() => getPostFormValidationSchema(t), [t]);
 
   const categoryOptions = buildCategoryOptions(
     categories?.map(keysToCamelCase)
@@ -58,7 +56,7 @@ const Create = () => {
       <NeetoUIForm
         formikProps={{
           initialValues: POST_FORM_INITIAL_VALUES,
-          validationSchema,
+          validationSchema: POST_FORM_VALIDATION_SCHEMA,
           onSubmit: () => {},
         }}
       >

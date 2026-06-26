@@ -12,7 +12,6 @@ class SessionsController < ApplicationController
 
   def destroy
     current_user.regenerate_authentication_token
-    render_notice("Successfully logged out") unless params.key?(:quiet)
   end
 
   private

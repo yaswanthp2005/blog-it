@@ -1,6 +1,6 @@
 import axios from "axios";
+import i18n from "common/i18n";
 import { Toastr } from "components/commons";
-import i18n from "translations";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
 axios.defaults.baseURL = "/";

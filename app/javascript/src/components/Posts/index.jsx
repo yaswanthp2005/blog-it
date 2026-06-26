@@ -1,12 +1,11 @@
 import routes from "constants/routes";
 
-import React, { useState } from "react";
+import React from "react";
 
 import AddCategoryModal from "components/Categories/AddModal";
 import CategoriesSidebar from "components/Categories/Sidebar";
 import { Container } from "components/commons";
-import { useCreateCategory } from "hooks/reactQuery/useCategoriesApi";
-import { useFetchPosts } from "hooks/reactQuery/usePostsApi";
+import usePostsListing from "hooks/usePostsListing";
 import { keysToCamelCase } from "neetocist";
 import { Button, NoData, Spinner, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
@@ -17,24 +16,20 @@ import Card from "./Card";
 
 const Posts = () => {
   const { t } = useTranslation();
-  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
-  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
-  const [newCategoryName, setNewCategoryName] = useState("");
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState([]);
-  const { mutateAsync: createCategory } = useCreateCategory();
-  const { data: posts, isLoading } = useFetchPosts(
-    selectedCategoryIds.length ? { category_ids: selectedCategoryIds } : {}
-  );
-
-  const handleCreateCategory = async () => {
-    if (!newCategoryName.trim()) {
-      return;
-    }
-
-    await createCategory({ name: newCategoryName.trim() });
-    setNewCategoryName("");
-    setIsCategoryModalOpen(false);
-  };
+  const {
+    handleBookClick,
+    handleCreateCategory,
+    isCategoriesOpen,
+    isCategoryModalOpen,
+    isLoading,
+    newCategoryName,
+    posts,
+    selectedCategoryIds,
+    setIsCategoriesOpen,
+    setIsCategoryModalOpen,
+    setNewCategoryName,
+    setSelectedCategoryIds,
+  } = usePostsListing();
 
   const renderContent = () => {
     if (isLoading) {
@@ -71,11 +66,8 @@ const Posts = () => {
           onSelectCategories={setSelectedCategoryIds}
         />
       }
+      onBookClick={handleBookClick}
       onCategoryClick={() => setIsCategoriesOpen(state => !state)}
-      onBookClick={() => {
-        setIsCategoriesOpen(false);
-        setSelectedCategoryIds([]);
-      }}
     >
       <div className="mb-8 flex items-center justify-between gap-x-4">
         <Typography className="text-gray-900" style="h2" weight="semibold">

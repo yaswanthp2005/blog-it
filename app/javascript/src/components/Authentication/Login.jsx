@@ -1,51 +1,22 @@
 import routes from "constants/routes";
 
-import React, { useMemo } from "react";
+import React from "react";
 
-import authApi from "apis/auth";
-import { setAuthHeaders } from "apis/axios";
 import { Lock } from "neetoicons";
 import { Button, Typography } from "neetoui";
 import { Form as NeetoUIForm, Input } from "neetoui/formik";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { setToLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
-import * as Yup from "yup";
 
-const LOGIN_FORM_INITIAL_VALUES = { email: "", password: "" };
+import {
+  LOGIN_FORM_INITIAL_VALUES,
+  LOGIN_FORM_VALIDATION_SCHEMA,
+} from "./constants";
+import { handleLoginSubmit } from "./utils";
 
 const Login = () => {
   const { t } = useTranslation();
-
-  const loginFormValidationSchema = useMemo(
-    () =>
-      Yup.object({
-        email: Yup.string()
-          .email(t("auth.validation.emailInvalid"))
-          .required(t("auth.validation.emailRequired")),
-        password: Yup.string().required(t("auth.validation.passwordRequired")),
-      }),
-    [t]
-  );
-
-  const handleSubmit = async (values, { setSubmitting }) => {
-    try {
-      const response = await authApi.login(values);
-      setToLocalStorage({
-        authToken: response.data.authentication_token,
-        email: response.data.email,
-        userId: response.data.id,
-        userName: response.data.name,
-      });
-      setAuthHeaders();
-      window.location.href = routes.posts.index;
-    } catch (error) {
-      logger.error(error);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
@@ -67,8 +38,8 @@ const Login = () => {
         <NeetoUIForm
           formikProps={{
             initialValues: LOGIN_FORM_INITIAL_VALUES,
-            validationSchema: loginFormValidationSchema,
-            onSubmit: handleSubmit,
+            validationSchema: LOGIN_FORM_VALIDATION_SCHEMA,
+            onSubmit: handleLoginSubmit,
           }}
         >
           <div className="flex flex-col gap-y-4">

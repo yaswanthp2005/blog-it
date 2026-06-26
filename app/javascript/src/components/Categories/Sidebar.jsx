@@ -8,6 +8,8 @@ import { Button, Input, Typography } from "neetoui";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
+import { filterCategoriesBySearchTerm, toggleCategorySelection } from "./utils";
+
 const CategoriesSidebar = ({
   isOpen,
   onAddCategory,
@@ -24,18 +26,15 @@ const CategoriesSidebar = ({
     [categories]
   );
 
-  const filteredCategories = normalizedCategories.filter(category =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredCategories = filterCategoriesBySearchTerm(
+    normalizedCategories,
+    searchTerm
   );
 
   const handleCategoryClick = categoryId => {
-    if (selectedCategoryIds.includes(categoryId)) {
-      onSelectCategories(selectedCategoryIds.filter(id => id !== categoryId));
-
-      return;
-    }
-
-    onSelectCategories([...selectedCategoryIds, categoryId]);
+    onSelectCategories(
+      toggleCategorySelection(selectedCategoryIds, categoryId)
+    );
   };
 
   if (!isOpen) {

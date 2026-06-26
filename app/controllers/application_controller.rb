@@ -3,7 +3,7 @@
 class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
-  before_action :authenticate_user_using_x_auth_token, if: -> { request.format.json? }
+  before_action :authenticate_user_using_x_auth_token
 
   protect_from_forgery
 

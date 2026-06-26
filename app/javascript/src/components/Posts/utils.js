@@ -50,12 +50,6 @@ const formatPublishedDateTime = publishedAt => {
   return `${datePart}, ${timePart}`;
 };
 
-const formatMyPostsDateTime = ({ lastPublishedAt, status, updatedAt }) => {
-  const dateTime = status === "draft" ? updatedAt : lastPublishedAt;
-
-  return formatPublishedDateTime(dateTime);
-};
-
 const capitalizeStatus = status =>
   status ? status.charAt(0).toUpperCase() + status.slice(1) : "";
 
@@ -70,12 +64,21 @@ const buildCategoryOptions = categories =>
     value: category.id,
   })) || [];
 
+const buildInitialValues = post => ({
+  categoryIds: post.categories.map(category => ({
+    label: category.name,
+    value: category.id,
+  })),
+  description: post.description,
+  title: post.title,
+});
+
 export {
   buildCategoryIds,
   buildCategoryOptions,
+  buildInitialValues,
   capitalizeStatus,
   formatDraftSavedAt,
-  formatMyPostsDateTime,
   formatPublishedDate,
   formatPublishedDateTime,
 };

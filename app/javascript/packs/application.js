@@ -1,5 +1,5 @@
 import "../stylesheets/application.scss";
-import "translations";
+import "common/i18n";
 import ReactRailsUJS from "react_ujs";
 import App from "../src/App";
 

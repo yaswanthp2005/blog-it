@@ -1,4 +1,6 @@
 {
+  "title": "BlogIt",
+  "pageTitle": "{{title}} | BlogIt",
   "common": {
     "cancel": "Cancel",
     "add": "Add",
