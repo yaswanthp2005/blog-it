@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 
-import { Container, Toastr } from "components/commons";
+import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
 import { useShowPost } from "hooks/reactQuery/usePostsApi";
 import { keysToCamelCase } from "neetocist";
-import { Alert, NoData, Spinner } from "neetoui";
+import { Alert, NoData, Spinner, Toastr } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
 import { Trans, useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
