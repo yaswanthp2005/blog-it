@@ -5,7 +5,6 @@ import {
   useFetchMyPosts,
   useUpdatePost,
 } from "hooks/reactQuery/usePostsApi";
-import { keysToCamelCase } from "neetocist";
 
 const useMyPostsTable = () => {
   const { data: posts, isLoading } = useFetchMyPosts();
@@ -40,10 +39,7 @@ const useMyPostsTable = () => {
     }
   };
 
-  const rowData = useMemo(
-    () => (posts ? posts.map(keysToCamelCase) : []),
-    [posts]
-  );
+  const rowData = useMemo(() => posts || [], [posts]);
 
   const totalCount = rowData.length;
   const selectedCount = bulkSelectedAllRows

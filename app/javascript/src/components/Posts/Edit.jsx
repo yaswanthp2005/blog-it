@@ -3,7 +3,6 @@ import React, { useEffect } from "react";
 import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
 import { useShowPost } from "hooks/reactQuery/usePostsApi";
-import { keysToCamelCase } from "neetocist";
 import { Alert, NoData, Spinner, Toastr } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
 import { Trans, useTranslation } from "react-i18next";
@@ -34,7 +33,7 @@ const Edit = () => {
     setIsDeleteAlertOpen,
   } = useEditPost();
 
-  const normalizedPost = post ? keysToCamelCase(post) : null;
+  const normalizedPost = post || null;
   const isUnauthorized =
     normalizedPost && normalizedPost.userId !== currentUserId;
 
@@ -44,9 +43,7 @@ const Edit = () => {
     }
   }, [isUnauthorized, t]);
 
-  const categoryOptions = buildCategoryOptions(
-    categories?.map(keysToCamelCase)
-  );
+  const categoryOptions = buildCategoryOptions(categories);
 
   if (isPostLoading || isCategoriesLoading) {
     return (

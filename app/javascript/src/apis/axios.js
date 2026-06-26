@@ -1,5 +1,6 @@
 import axios from "axios";
 import i18n from "common/i18n";
+import { keysToCamelCase } from "neetocist";
 import { Toastr } from "neetoui";
 import { getFromLocalStorage, setToLocalStorage } from "utils/storage";
 
@@ -29,8 +30,10 @@ const resetAuthTokens = () => {
 };
 
 const handleSuccessResponse = response => {
-  if (response) {
+  if (response?.data) {
+    response.data = keysToCamelCase(response.data);
     response.success = response.status === 200;
+
     if (response.data.notice) {
       Toastr.success(response.data.notice);
     }
@@ -43,6 +46,12 @@ const handleErrorResponse = axiosErrorObject => {
   if (axiosErrorObject.response?.status === 401) {
     setToLocalStorage({ authToken: null, email: null, userName: null });
     resetAuthTokens();
+  }
+
+  if (axiosErrorObject.response?.data) {
+    axiosErrorObject.response.data = keysToCamelCase(
+      axiosErrorObject.response.data
+    );
   }
 
   Toastr.error(

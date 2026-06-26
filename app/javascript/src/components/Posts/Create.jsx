@@ -5,7 +5,6 @@ import React from "react";
 import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
 import { useCreatePost } from "hooks/reactQuery/usePostsApi";
-import { keysToCamelCase } from "neetocist";
 import { Spinner } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
 import { useTranslation } from "react-i18next";
@@ -26,9 +25,7 @@ const Create = () => {
   const { mutateAsync: createPost } = useCreatePost();
   const { data: categories, isLoading } = useFetchCategories();
 
-  const categoryOptions = buildCategoryOptions(
-    categories?.map(keysToCamelCase)
-  );
+  const categoryOptions = buildCategoryOptions(categories);
 
   const buildPayload = values => ({
     ...values,

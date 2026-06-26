@@ -5,7 +5,6 @@ import React from "react";
 import Avvvatars from "avvvatars-react";
 import { Container } from "components/commons";
 import { useShowPost } from "hooks/reactQuery/usePostsApi";
-import { keysToCamelCase } from "neetocist";
 import { Edit } from "neetoicons";
 import { Button, NoData, Spinner, Tag, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
@@ -49,7 +48,7 @@ const Show = () => {
     status,
     title,
     userId,
-  } = keysToCamelCase(post);
+  } = post;
 
   const isOwnPost = userId === currentUserId;
   const isDraft = status === POST_STATUSES.DRAFT;

@@ -8,7 +8,7 @@ export const handleLoginSubmit = async (values, { setSubmitting }) => {
   try {
     const response = await authApi.login(values);
     setToLocalStorage({
-      authToken: response.data.authentication_token,
+      authToken: response.data.authenticationToken,
       email: response.data.email,
       userId: response.data.id,
       userName: response.data.name,

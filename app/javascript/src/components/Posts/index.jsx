@@ -6,7 +6,6 @@ import AddCategoryModal from "components/Categories/AddModal";
 import CategoriesSidebar from "components/Categories/Sidebar";
 import { Container } from "components/commons";
 import usePostsListing from "hooks/usePostsListing";
-import { keysToCamelCase } from "neetocist";
 import { Button, NoData, Spinner, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
@@ -44,11 +43,9 @@ const Posts = () => {
       return <NoData title={t("posts.noBlogPostsYet")} />;
     }
 
-    const normalizedPosts = posts.map(keysToCamelCase);
-
     return (
       <div>
-        {normalizedPosts.map(post => (
+        {posts.map(post => (
           <Card key={post.id} post={post} />
         ))}
       </div>

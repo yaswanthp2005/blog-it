@@ -2,7 +2,6 @@ import React, { useMemo, useState } from "react";
 
 import classnames from "classnames";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
-import { keysToCamelCase } from "neetocist";
 import { Plus, Search } from "neetoicons";
 import { Button, Input, Typography } from "neetoui";
 import PropTypes from "prop-types";
@@ -21,10 +20,7 @@ const CategoriesSidebar = ({
   const [searchTerm, setSearchTerm] = useState("");
   const { data: categories, isLoading } = useFetchCategories();
 
-  const normalizedCategories = useMemo(
-    () => (categories || []).map(keysToCamelCase),
-    [categories]
-  );
+  const normalizedCategories = useMemo(() => categories || [], [categories]);
 
   const filteredCategories = filterCategoriesBySearchTerm(
     normalizedCategories,
