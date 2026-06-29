@@ -4,10 +4,13 @@ require "test_helper"
 
 class PostTest < ActiveSupport::TestCase
   def setup
+    @user = create(:user)
     @post = Post.new(
       title: "Getting started with Rails",
       description: "Rails makes it easy to build web applications.",
-      is_bloggable: true
+      is_bloggable: true,
+      user: @user,
+      organization: @user.organization
     )
   end
 
@@ -21,7 +24,9 @@ class PostTest < ActiveSupport::TestCase
     duplicate_post = Post.create!(
       title: "Getting started with Rails",
       description: "Another post with the same title.",
-      is_bloggable: true
+      is_bloggable: true,
+      user: @user,
+      organization: @user.organization
     )
 
     assert_equal "getting-started-with-rails-2", duplicate_post.slug

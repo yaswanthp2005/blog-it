@@ -1,12 +1,13 @@
 # frozen_string_literal: true
 
 class PostsController < ApplicationController
+  after_action :verify_authorized, except: :index
+  after_action :verify_policy_scoped, only: :index
+
   before_action :load_post!, only: %i[show update destroy]
-  before_action :authorize_post_owner!, only: %i[update destroy]
 
   def index
-    @posts = Post.includes(:categories, :user)
-      .where(organization_id: current_user.organization_id)
+    @posts = policy_scope(Post).includes(:categories, :user)
 
     @posts = if params[:mine] == "true"
       @posts.where(user_id: current_user.id)
@@ -27,6 +28,7 @@ class PostsController < ApplicationController
   def create
     @post = current_user.posts.new(post_params)
     @post.organization = current_user.organization
+    authorize @post
     @post.save!
     render_notice(
       t("successfully_created", entity: "Post"),
@@ -36,17 +38,17 @@ class PostsController < ApplicationController
   end
 
   def show
-    unless @post.published? || @post.user_id == current_user.id
-      render_error("Couldn't find Post", :not_found) and return
-    end
+    authorize @post
   end
 
   def update
+    authorize @post
     @post.update!(post_params)
     render_notice(t("successfully_updated", entity: "Post")) unless params.key?(:quiet)
   end
 
   def destroy
+    authorize @post
     @post.destroy!
     render_notice(t("successfully_deleted", entity: "Post")) unless params.key?(:quiet)
   end
@@ -58,13 +60,6 @@ class PostsController < ApplicationController
     end
 
     def load_post!
-      @post = Post.where(organization_id: current_user.organization_id)
-        .find_by!(slug: params[:slug])
-    end
-
-    def authorize_post_owner!
-      return if @post.user_id == current_user.id
-
-      render_error("Unauthorized", :forbidden)
+      @post = policy_scope(Post).find_by!(slug: params[:slug])
     end
 end

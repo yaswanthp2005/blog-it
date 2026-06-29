@@ -29,6 +29,8 @@
 
 en:
   hello: "Hello world"
+  authorization:
+    denied: "Access denied. You are not authorized to perform this action."
   successfully_created: "%{entity} was successfully created!"
   successfully_updated: "%{entity} was successfully updated!"
   successfully_deleted: "%{entity} was successfully deleted!"

@@ -9,6 +9,9 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActiveRecord::RecordNotFound, with: :handle_record_not_found
   rescue_from ActiveRecord::RecordInvalid, with: :handle_record_invalid
+  rescue_from Pundit::NotAuthorizedError, with: :handle_authorization_error
+
+  include Pundit::Authorization
 
   def render_notice(message, status = :ok, context = {})
     render status:, json: { notice: message }.merge(context)
@@ -47,5 +50,9 @@ class ApplicationController < ActionController::Base
 
     def current_user
       @current_user
+    end
+
+    def handle_authorization_error
+      render_error(t("authorization.denied"), :forbidden)
     end
 end
