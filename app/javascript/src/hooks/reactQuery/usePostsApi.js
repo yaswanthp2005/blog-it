@@ -82,3 +82,27 @@ export const useDestroyPost = () => {
     },
   });
 };
+
+export const useVotePost = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ slug, voteType }) => {
+      const { data } = await postsApi.vote({ slug, voteType });
+
+      return { slug, updatedPost: data.post };
+    },
+    onSuccess: ({ slug, updatedPost }) => {
+      queryClient.setQueriesData({ queryKey: [QUERY_KEYS.POSTS] }, oldPosts => {
+        if (!oldPosts) {
+          return oldPosts;
+        }
+
+        return oldPosts.map(post =>
+          post.slug === slug ? { ...post, ...updatedPost } : post
+        );
+      });
+      queryClient.invalidateQueries([QUERY_KEYS.POST, slug]);
+    },
+  });
+};

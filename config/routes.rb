@@ -15,7 +15,9 @@ Rails.application.routes.draw do
     resource :session, only: %i[create destroy]
     resources :users, only: :create
     resources :categories, only: %i[index create]
-    resources :posts, except: %i[new edit], param: :slug
+    resources :posts, except: %i[new edit], param: :slug do
+      resource :vote, only: :create, controller: "post_votes"
+    end
   end
 
   root "home#index"

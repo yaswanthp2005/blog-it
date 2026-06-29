@@ -31,12 +31,16 @@ const destroy = ({ slug, quiet = false }) => {
   return axios.delete(path);
 };
 
+const vote = ({ slug, voteType }) =>
+  axios.post(`/posts/${slug}/vote`, { vote: { vote_type: voteType } });
+
 const postsApi = {
   create,
   destroy,
   fetch,
   show,
   update,
+  vote,
 };
 
 export default postsApi;

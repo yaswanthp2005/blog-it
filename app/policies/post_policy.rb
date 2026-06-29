@@ -25,6 +25,10 @@ class PostPolicy
     update?
   end
 
+  def vote?
+    post.organization_id == user.organization_id && post.published?
+  end
+
   class Scope
     attr_reader :user, :scope
 

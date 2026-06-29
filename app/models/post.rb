@@ -11,6 +11,7 @@ class Post < ApplicationRecord
 
   has_many :post_categories, dependent: :destroy
   has_many :categories, through: :post_categories
+  has_many :votes, dependent: :destroy
 
   validates :title, presence: true, length: { maximum: MAX_TITLE_LENGTH }
   validates :description, presence: true, length: { maximum: MAX_DESCRIPTION_LENGTH }
@@ -21,8 +22,27 @@ class Post < ApplicationRecord
 
   before_create :set_slug
   before_save :set_last_published_at, if: :publishing?
+  before_save :update_is_bloggable, if: :vote_counts_changed?
+
+  def net_vote_count
+    upvotes - downvotes
+  end
+
+  def user_vote_type(user)
+    return unless user
+
+    votes.find { |vote| vote.user_id == user.id }&.vote_type
+  end
 
   private
+
+    def vote_counts_changed?
+      will_save_change_to_upvotes? || will_save_change_to_downvotes?
+    end
+
+    def update_is_bloggable
+      self.is_bloggable = net_vote_count > Constants::BLOGGABLE_VOTE_THRESHOLD
+    end
 
     def publishing?
       status_changed? && published?

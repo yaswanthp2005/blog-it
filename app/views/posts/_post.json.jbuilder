@@ -14,3 +14,8 @@ end
 json.created_at post.created_at
 json.updated_at post.updated_at
 json.last_published_at post.last_published_at
+json.upvotes post.upvotes
+json.downvotes post.downvotes
+json.net_vote_count post.net_vote_count
+json.is_bloggable post.is_bloggable
+json.user_vote post.user_vote_type(current_user)

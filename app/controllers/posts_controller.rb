@@ -7,7 +7,7 @@ class PostsController < ApplicationController
   before_action :load_post!, only: %i[show update destroy]
 
   def index
-    @posts = policy_scope(Post).includes(:categories, :user)
+    @posts = policy_scope(Post).includes(:categories, :user, :votes)
 
     if params[:mine] == "true"
       @posts = @posts.where(user_id: current_user.id)
@@ -61,6 +61,6 @@ class PostsController < ApplicationController
     end
 
     def load_post!
-      @post = policy_scope(Post).find_by!(slug: params[:slug])
+      @post = policy_scope(Post).includes(:categories, :user, :votes).find_by!(slug: params[:slug])
     end
 end

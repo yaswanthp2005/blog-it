@@ -6,6 +6,11 @@ const POST_STATUSES = {
   PUBLISHED: "published",
 };
 
+const VOTE_TYPES = {
+  UPVOTE: "upvote",
+  DOWNVOTE: "downvote",
+};
+
 const MAX_DESCRIPTION_LENGTH = 1000;
 const TITLE_MAX_LENGTH = 50;
 const DEFAULT_PAGE_SIZE = 10;
@@ -49,4 +54,5 @@ export {
   POST_STATUSES,
   PRIMARY_ACTION_LABEL_KEYS,
   TITLE_MAX_LENGTH,
+  VOTE_TYPES,
 };

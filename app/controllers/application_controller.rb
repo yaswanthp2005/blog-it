@@ -52,6 +52,8 @@ class ApplicationController < ActionController::Base
       @current_user
     end
 
+    helper_method :current_user
+
     def handle_authorization_error
       render_error(t("authorization.denied"), :forbidden)
     end

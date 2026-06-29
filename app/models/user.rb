@@ -9,6 +9,7 @@ class User < ApplicationRecord
   belongs_to :organization
 
   has_many :posts, dependent: :restrict_with_exception
+  has_many :votes, dependent: :destroy
 
   has_secure_password
   has_secure_token :authentication_token

@@ -99,6 +99,24 @@ class PostTest < ActiveSupport::TestCase
     assert_equal original_last_published_at, @post.reload.last_published_at
   end
 
+  def test_post_sets_is_bloggable_when_net_vote_count_exceeds_threshold
+    @post.update!(upvotes: Constants::BLOGGABLE_VOTE_THRESHOLD + 1, downvotes: 0)
+
+    assert @post.is_bloggable
+  end
+
+  def test_post_unsets_is_bloggable_when_net_vote_count_does_not_exceed_threshold
+    @post.update!(
+      upvotes: Constants::BLOGGABLE_VOTE_THRESHOLD,
+      downvotes: 0,
+      is_bloggable: true
+    )
+
+    @post.update!(downvotes: 1)
+
+    assert_not @post.reload.is_bloggable
+  end
+
   def test_post_should_set_slug_on_create
     @post.save!
     assert_equal "getting-started-with-rails", @post.slug
