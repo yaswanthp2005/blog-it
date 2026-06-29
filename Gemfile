@@ -26,6 +26,11 @@ gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
 
+# Required by Action Cable's redis pubsub adapter and Sidekiq
+gem "redis", "~> 5.0"
+
+gem "sidekiq", "~> 7.0"
+
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
@@ -78,3 +83,7 @@ gem "sprockets"
 gem "sprockets-rails"
 
 gem "pundit"
+
+# PDF generation
+gem "wicked_pdf"
+gem "wkhtmltopdf-binary"

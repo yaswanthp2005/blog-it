@@ -1,11 +1,11 @@
 import routes from "constants/routes";
 
-import React from "react";
+import React, { useState } from "react";
 
 import Avvvatars from "avvvatars-react";
 import { Container } from "components/commons";
 import { useShowPost } from "hooks/reactQuery/usePostsApi";
-import { Edit } from "neetoicons";
+import { Download, Edit } from "neetoicons";
 import { Button, NoData, Spinner, Tag, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
 import { generatePath, useHistory, useParams } from "react-router-dom";
@@ -13,6 +13,7 @@ import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
 import { POST_STATUSES } from "./constants";
+import DownloadReport from "./DownloadReport";
 import { formatPublishedDate } from "./utils";
 
 const Show = () => {
@@ -21,6 +22,7 @@ const Show = () => {
   const { t } = useTranslation();
   const { data: post, isLoading } = useShowPost(slug);
   const currentUserId = getFromLocalStorage("authUserId");
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -99,6 +101,14 @@ const Show = () => {
               onClick={handleEdit}
             />
           )}
+          <Button
+            className="flex-shrink-0"
+            icon={Download}
+            iconSize={20}
+            style="text"
+            tooltipProps={{ content: t("posts.pdf.download") }}
+            onClick={() => setIsDownloadModalOpen(true)}
+          />
         </div>
         <div className="mb-10 flex items-center gap-x-3">
           <Avvvatars size={44} style="character" value={authorName} />
@@ -129,6 +139,11 @@ const Show = () => {
           {description}
         </Typography>
       </div>
+      <DownloadReport
+        isOpen={isDownloadModalOpen}
+        slug={slug}
+        onClose={() => setIsDownloadModalOpen(false)}
+      />
     </Container>
   );
 };

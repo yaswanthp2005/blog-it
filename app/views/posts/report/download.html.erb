@@ -1,0 +1,18 @@
+<div class="title"><%= @post.title %></div>
+
+<div class="meta">
+  <div>Author: <%= @post.user.name %></div>
+  <% if @post.last_published_at.present? %>
+    <div>Published: <%= @post.last_published_at.strftime("%B %d, %Y") %></div>
+  <% end %>
+</div>
+
+<% if @post.categories.any? %>
+  <div class="categories">
+    <% @post.categories.each do |category| %>
+      <span class="category"><%= category.name %></span>
+    <% end %>
+  </div>
+<% end %>
+
+<div class="description"><%= @post.description %></div>

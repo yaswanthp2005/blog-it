@@ -34,6 +34,12 @@ en:
   successfully_created: "%{entity} was successfully created!"
   successfully_updated: "%{entity} was successfully updated!"
   successfully_deleted: "%{entity} was successfully deleted!"
+  not_found: "Couldn't find %{entity}"
+  report:
+    render: "Rendering the blog post"
+    generate: "Generating the PDF"
+    upload: "Uploading to server"
+    attach: "Preparing download"
   post:
     slug:
       immutable: "is immutable!"

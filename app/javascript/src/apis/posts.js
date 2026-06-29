@@ -4,6 +4,11 @@ const fetch = params => axios.get("/posts", { params });
 
 const show = slug => axios.get(`/posts/${slug}`);
 
+const generatePdf = slug => axios.post(`/posts/${slug}/report`, {});
+
+const download = slug =>
+  axios.get(`/posts/${slug}/report/download`, { responseType: "blob" });
+
 const create = ({ categoryIds, status, ...payload }) =>
   axios.post("/posts", {
     post: {
@@ -37,7 +42,9 @@ const vote = ({ slug, voteType }) =>
 const postsApi = {
   create,
   destroy,
+  download,
   fetch,
+  generatePdf,
   show,
   update,
   vote,

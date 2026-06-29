@@ -31,10 +31,15 @@ const resetAuthTokens = () => {
 
 const handleSuccessResponse = response => {
   if (response?.data) {
-    response.data = keysToCamelCase(response.data);
+    const isBlobResponse = response.data instanceof Blob;
+
+    if (!isBlobResponse) {
+      response.data = keysToCamelCase(response.data);
+    }
+
     response.success = response.status === 200;
 
-    if (response.data.notice) {
+    if (!isBlobResponse && response.data.notice) {
       Toastr.success(response.data.notice);
     }
   }

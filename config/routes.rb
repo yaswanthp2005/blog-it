@@ -17,6 +17,9 @@ Rails.application.routes.draw do
     resources :categories, only: %i[index create]
     resources :posts, except: %i[new edit], param: :slug do
       resource :vote, only: :create, controller: "post_votes"
+      resource :report, only: :create, module: :posts do
+        get :download, on: :collection
+      end
     end
   end
 
