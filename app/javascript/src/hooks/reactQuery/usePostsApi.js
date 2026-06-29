@@ -13,11 +13,11 @@ export const useFetchPosts = params =>
     },
   });
 
-export const useFetchMyPosts = () =>
+export const useFetchMyPosts = params =>
   useQuery({
-    queryKey: [QUERY_KEYS.MY_POSTS],
+    queryKey: [QUERY_KEYS.MY_POSTS, params],
     queryFn: async () => {
-      const { data } = await postsApi.fetch({ mine: true });
+      const { data } = await postsApi.fetch({ mine: true, ...params });
 
       return data.posts;
     },

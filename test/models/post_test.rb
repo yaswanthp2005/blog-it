@@ -88,6 +88,17 @@ class PostTest < ActiveSupport::TestCase
     assert_not_nil @post.last_published_at
   end
 
+  def test_post_does_not_update_last_published_at_when_already_published
+    @post.update!(status: :published)
+    original_last_published_at = @post.last_published_at
+
+    travel 1.hour do
+      @post.update!(status: :published)
+    end
+
+    assert_equal original_last_published_at, @post.reload.last_published_at
+  end
+
   def test_post_should_set_slug_on_create
     @post.save!
     assert_equal "getting-started-with-rails", @post.slug

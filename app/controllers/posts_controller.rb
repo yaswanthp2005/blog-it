@@ -9,17 +9,18 @@ class PostsController < ApplicationController
   def index
     @posts = policy_scope(Post).includes(:categories, :user)
 
-    @posts = if params[:mine] == "true"
-      @posts.where(user_id: current_user.id)
+    if params[:mine] == "true"
+      @posts = @posts.where(user_id: current_user.id)
+      @posts = PostFilterService.new(@posts, params:).process
     else
-      @posts.published
-    end
+      @posts = @posts.published
 
-    category_ids = Array(params[:category_ids]).compact_blank
+      category_ids = Array(params[:category_ids]).compact_blank
 
-    if category_ids.present?
-      matching_post_ids = PostCategory.where(category_id: category_ids).select(:post_id)
-      @posts = @posts.where(id: matching_post_ids)
+      if category_ids.present?
+        matching_post_ids = PostCategory.where(category_id: category_ids).select(:post_id)
+        @posts = @posts.where(id: matching_post_ids)
+      end
     end
 
     @posts = @posts.order(created_at: :desc)

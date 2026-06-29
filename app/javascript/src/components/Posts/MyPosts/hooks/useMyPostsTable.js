@@ -1,23 +1,61 @@
 import { useMemo, useState } from "react";
 
+import i18n from "common/i18n";
 import {
   useDestroyPost,
   useFetchMyPosts,
   useUpdatePost,
 } from "hooks/reactQuery/usePostsApi";
+import useQueryParams from "hooks/useQueryParams";
+import { Toastr } from "neetoui";
+import { useHistory } from "react-router-dom";
+import useMyPostsColumnsStore from "stores/useMyPostsColumnsStore";
+
+import {
+  buildMyPostsRequestParams,
+  buildURL,
+  filtersFromQueryParams,
+  hasAppliedFilters,
+} from "../utils";
 
 const useMyPostsTable = () => {
-  const { data: posts, isLoading } = useFetchMyPosts();
+  const history = useHistory();
+  const queryParams = useQueryParams();
+  const appliedFilters = filtersFromQueryParams(queryParams);
+  const requestParams = buildMyPostsRequestParams(queryParams);
+  const { data: posts, isLoading } = useFetchMyPosts(requestParams);
   const { mutateAsync: updatePost } = useUpdatePost();
   const { mutateAsync: destroyPost } = useDestroyPost();
+  const visibleColumns = useMyPostsColumnsStore(state => state.visibleColumns);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [bulkSelectedAllRows, setBulkSelectedAllRows] = useState(false);
   const [postToDelete, setPostToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
+  const [isBulkDeleteAlertOpen, setIsBulkDeleteAlertOpen] = useState(false);
+  const [isSearchFiltersOpen, setIsSearchFiltersOpen] = useState(false);
+
+  const replaceQueryParams = filters => {
+    history.replace(buildURL(filters));
+  };
+
+  const handleRemoveTitle = () =>
+    replaceQueryParams({ ...appliedFilters, title: "" });
+
+  const handleRemoveStatus = () =>
+    replaceQueryParams({ ...appliedFilters, status: "" });
+
+  const handleRemoveCategory = categoryId =>
+    replaceQueryParams({
+      ...appliedFilters,
+      categoryIds: appliedFilters.categoryIds.filter(id => id !== categoryId),
+    });
 
   const handleStatusChange = async (slug, status) => {
     try {
-      await updatePost({ quiet: true, slug, status });
+      await updatePost({ slug, status });
     } catch (error) {
       logger.error(error);
     }
@@ -32,10 +70,70 @@ const useMyPostsTable = () => {
       setIsDeleting(true);
       await destroyPost({ quiet: true, slug: postToDelete.slug });
       setPostToDelete(null);
+      setSelectedRowKeys(previousKeys =>
+        previousKeys.filter(key => key !== postToDelete.id)
+      );
     } catch (error) {
       logger.error(error);
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const selectedPosts = useMemo(() => {
+    if (!posts?.length) {
+      return [];
+    }
+
+    if (bulkSelectedAllRows) {
+      return posts;
+    }
+
+    return posts.filter(post => selectedRowKeys.includes(post.id));
+  }, [bulkSelectedAllRows, posts, selectedRowKeys]);
+
+  const handleBulkStatusChange = async status => {
+    if (!selectedPosts.length) {
+      return;
+    }
+
+    try {
+      setIsBulkUpdating(true);
+      await Promise.all(
+        selectedPosts.map(({ slug }) =>
+          updatePost({ quiet: true, slug, status })
+        )
+      );
+
+      Toastr.success(
+        i18n.t("toast.bulkStatusUpdated", { count: selectedPosts.length })
+      );
+      setSelectedRowKeys([]);
+      setBulkSelectedAllRows(false);
+    } catch (error) {
+      logger.error(error);
+    } finally {
+      setIsBulkUpdating(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!selectedPosts.length) {
+      return;
+    }
+
+    try {
+      setIsBulkDeleting(true);
+      await Promise.all(
+        selectedPosts.map(({ slug }) => destroyPost({ quiet: true, slug }))
+      );
+      setIsBulkDeleteAlertOpen(false);
+      setSelectedRowKeys([]);
+      setBulkSelectedAllRows(false);
+    } catch (error) {
+      logger.error(error);
+    } finally {
+      setIsBulkDeleting(false);
     }
   };
 
@@ -45,22 +143,41 @@ const useMyPostsTable = () => {
   const selectedCount = bulkSelectedAllRows
     ? totalCount
     : selectedRowKeys.length;
+  const hasSelection = selectedCount > 0;
+  const areFiltersApplied = hasAppliedFilters(appliedFilters);
 
   return {
+    appliedFilters,
+    areFiltersApplied,
     bulkSelectedAllRows,
+    handleBulkDelete,
+    handleBulkStatusChange,
     handleDelete,
+    handleRemoveCategory,
+    handleRemoveStatus,
+    handleRemoveTitle,
     handleStatusChange,
+    hasSelection,
+    isBulkDeleteAlertOpen,
+    isBulkDeleting,
+    isBulkUpdating,
     isDeleting,
     isLoading,
+    isSearchFiltersOpen,
     postToDelete,
     posts,
+    replaceQueryParams,
     rowData,
     selectedCount,
+    selectedPosts,
     selectedRowKeys,
     setBulkSelectedAllRows,
+    setIsBulkDeleteAlertOpen,
+    setIsSearchFiltersOpen,
     setPostToDelete,
     setSelectedRowKeys,
     totalCount,
+    visibleColumns,
   };
 };
 

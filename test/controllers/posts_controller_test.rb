@@ -57,6 +57,55 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
     assert_not_includes post_slugs, @post.slug
   end
 
+  def test_should_filter_my_posts_by_title
+    searchable_post = create(
+      :post,
+      user: @owner,
+      organization: @owner.organization,
+      title: "Unique searchable title"
+    )
+
+    get posts_url,
+      params: { mine: "true", title: "searchable" },
+      headers: @owner_headers,
+      as: :json
+
+    assert_response :success
+    post_slugs = response.parsed_body["posts"].pluck("slug")
+    assert_includes post_slugs, searchable_post.slug
+    assert_not_includes post_slugs, @post.slug
+  end
+
+  def test_should_filter_my_posts_by_category
+    category = create(:category)
+    categorized_post = create(:post, user: @owner, organization: @owner.organization)
+    categorized_post.categories << category
+
+    get posts_url,
+      params: { mine: "true", category_ids: [category.id] },
+      headers: @owner_headers,
+      as: :json
+
+    assert_response :success
+    post_slugs = response.parsed_body["posts"].pluck("slug")
+    assert_includes post_slugs, categorized_post.slug
+    assert_not_includes post_slugs, @post.slug
+  end
+
+  def test_should_filter_my_posts_by_status
+    draft_post = create(:post, status: :draft, user: @owner, organization: @owner.organization)
+
+    get posts_url,
+      params: { mine: "true", status: "draft" },
+      headers: @owner_headers,
+      as: :json
+
+    assert_response :success
+    post_slugs = response.parsed_body["posts"].pluck("slug")
+    assert_includes post_slugs, draft_post.slug
+    assert_not_includes post_slugs, @post.slug
+  end
+
   def test_should_create_post
     assert_difference("Post.count") do
       post posts_url,

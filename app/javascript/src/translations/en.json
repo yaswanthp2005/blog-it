@@ -13,6 +13,11 @@
     "clearSelection": "Clear selection",
     "somethingWentWrong": "Something went wrong!"
   },
+  "toast": {
+    "filtersApplied": "Filters applied successfully",
+    "filtersCleared": "Filters cleared successfully",
+    "bulkStatusUpdated": "Status updated successfully for {{count}} blog post(s)"
+  },
   "auth": {
     "signIn": "Sign In",
     "signUp": "Sign Up",
@@ -73,6 +78,26 @@
     "moreActions": "More actions",
     "deleteTitle": "Delete blog post",
     "deleteConfirmMessage": "Are you sure you want to delete <1>{{title}}</1>? This action cannot be undone.",
+    "articlesCount": "{{count}} articles",
+    "resultsCount": "{{count}} results",
+    "resultsFor": "{{count}} results for ",
+    "filters": {
+      "columns": "Columns",
+      "searchFilters": "Search filters",
+      "clear": "Clear",
+      "clearFilters": "Clear filters",
+      "done": "Done",
+      "allCategories": "All categories",
+      "allStatuses": "All statuses",
+      "titlePlaceholder": "Search by title",
+      "categoryPlaceholder": "Select categories"
+    },
+    "bulkActions": {
+      "changeStatus": "Change status",
+      "selected": "{{count}} selected",
+      "deleteTitle": "Delete blog posts",
+      "deleteMessage": "Are you sure you want to delete {{count}} blog post(s)? This action cannot be undone."
+    },
     "table": {
       "title": "Title",
       "category": "Category",
