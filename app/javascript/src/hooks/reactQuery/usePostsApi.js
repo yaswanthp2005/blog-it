@@ -23,7 +23,7 @@ export const useFetchMyPosts = params =>
     },
   });
 
-export const useShowPost = slug =>
+export const useShowPost = (slug, enabled = true) =>
   useQuery({
     queryKey: [QUERY_KEYS.POST, slug],
     queryFn: async () => {
@@ -31,7 +31,7 @@ export const useShowPost = slug =>
 
       return data.post;
     },
-    enabled: !!slug,
+    enabled: !!slug && enabled,
   });
 
 export const useCreatePost = () => {
@@ -73,6 +73,38 @@ export const useDestroyPost = () => {
   return useMutation({
     mutationFn: async payload => {
       const { data } = await postsApi.destroy(payload);
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([QUERY_KEYS.POSTS]);
+      queryClient.invalidateQueries([QUERY_KEYS.MY_POSTS]);
+    },
+  });
+};
+
+export const useBulkUpdatePosts = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async payload => {
+      const { data } = await postsApi.bulkUpdate(payload);
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries([QUERY_KEYS.POSTS]);
+      queryClient.invalidateQueries([QUERY_KEYS.MY_POSTS]);
+    },
+  });
+};
+
+export const useBulkDestroyPosts = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async payload => {
+      const { data } = await postsApi.bulkDestroy(payload);
 
       return data;
     },

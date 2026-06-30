@@ -15,8 +15,7 @@
   },
   "toast": {
     "filtersApplied": "Filters applied successfully",
-    "filtersCleared": "Filters cleared successfully",
-    "bulkStatusUpdated": "Status updated successfully for {{count}} blog post(s)"
+    "filtersCleared": "Filters cleared successfully"
   },
   "auth": {
     "signIn": "Sign In",

@@ -1,13 +1,13 @@
 import { useMemo, useState } from "react";
 
-import i18n from "common/i18n";
 import {
+  useBulkDestroyPosts,
+  useBulkUpdatePosts,
   useDestroyPost,
   useFetchMyPosts,
   useUpdatePost,
 } from "hooks/reactQuery/usePostsApi";
 import useQueryParams from "hooks/useQueryParams";
-import { Toastr } from "neetoui";
 import { useHistory } from "react-router-dom";
 import useMyPostsColumnsStore from "stores/useMyPostsColumnsStore";
 
@@ -25,6 +25,8 @@ const useMyPostsTable = () => {
   const requestParams = buildMyPostsRequestParams(queryParams);
   const { data: posts, isLoading } = useFetchMyPosts(requestParams);
   const { mutateAsync: updatePost } = useUpdatePost();
+  const { mutateAsync: bulkUpdatePosts } = useBulkUpdatePosts();
+  const { mutateAsync: bulkDestroyPosts } = useBulkDestroyPosts();
   const { mutateAsync: destroyPost } = useDestroyPost();
   const visibleColumns = useMyPostsColumnsStore(state => state.visibleColumns);
 
@@ -99,15 +101,10 @@ const useMyPostsTable = () => {
 
     try {
       setIsBulkUpdating(true);
-      await Promise.all(
-        selectedPosts.map(({ slug }) =>
-          updatePost({ quiet: true, slug, status })
-        )
-      );
-
-      Toastr.success(
-        i18n.t("toast.bulkStatusUpdated", { count: selectedPosts.length })
-      );
+      await bulkUpdatePosts({
+        slugs: selectedPosts.map(({ slug }) => slug),
+        status,
+      });
       setSelectedRowKeys([]);
       setBulkSelectedAllRows(false);
     } catch (error) {
@@ -124,9 +121,9 @@ const useMyPostsTable = () => {
 
     try {
       setIsBulkDeleting(true);
-      await Promise.all(
-        selectedPosts.map(({ slug }) => destroyPost({ quiet: true, slug }))
-      );
+      await bulkDestroyPosts({
+        slugs: selectedPosts.map(({ slug }) => slug),
+      });
       setIsBulkDeleteAlertOpen(false);
       setSelectedRowKeys([]);
       setBulkSelectedAllRows(false);

@@ -5,9 +5,9 @@ import { useState } from "react";
 import { useDestroyPost, useUpdatePost } from "hooks/reactQuery/usePostsApi";
 import { generatePath, useHistory, useParams } from "react-router-dom";
 
-import { buildCategoryIds } from "../common/utils";
+import { buildCategoryIds, buildPreviewPost } from "../common/utils";
 
-const useEditPost = () => {
+const useEditPost = post => {
   const history = useHistory();
   const { slug } = useParams();
   const { mutateAsync: updatePost } = useUpdatePost();
@@ -30,8 +30,11 @@ const useEditPost = () => {
     }
   };
 
-  const handlePreview = () => {
-    history.push(generatePath(routes.posts.show, { slug }));
+  const handlePreview = formValues => {
+    history.push(generatePath(routes.posts.show, { slug }), {
+      isPreview: true,
+      previewPost: buildPreviewPost(formValues, post),
+    });
   };
 
   const handleDelete = async () => {

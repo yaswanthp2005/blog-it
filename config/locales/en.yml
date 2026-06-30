@@ -36,7 +36,11 @@ en:
   successfully_updated: "%{entity} was successfully updated!"
   successfully_deleted: "%{entity} was successfully deleted!"
   not_found: "Couldn't find %{entity}"
+  bulk_update:
+    status_updated: "Status updated successfully for %{count} blog post(s)"
+    deleted: "%{count} blog post(s) were successfully deleted!"
   report:
+    started: "PDF generation started"
     render: "Rendering the blog post"
     generate: "Generating the PDF"
     upload: "Uploading to server"

@@ -24,6 +24,8 @@ const Edit = () => {
   const { data: categories, isLoading: isCategoriesLoading } =
     useFetchCategories();
 
+  const normalizedPost = post || null;
+
   const {
     handleDelete,
     handlePreview,
@@ -31,9 +33,8 @@ const Edit = () => {
     isDeleteAlertOpen,
     isDeleting,
     setIsDeleteAlertOpen,
-  } = useEditPost();
+  } = useEditPost(normalizedPost);
 
-  const normalizedPost = post || null;
   const isUnauthorized =
     normalizedPost && normalizedPost.userId !== currentUserId;
 

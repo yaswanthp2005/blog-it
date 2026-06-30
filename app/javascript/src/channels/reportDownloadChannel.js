@@ -18,8 +18,8 @@ export const subscribeToReportDownloadChannel = ({
         generatePdf();
       },
       received(data) {
-        const { message, progress } = data;
-        setMessage(message);
+        const { notice, progress } = data;
+        setMessage(notice);
         setProgress(progress);
       },
     }

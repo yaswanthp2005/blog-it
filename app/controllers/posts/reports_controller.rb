@@ -6,8 +6,6 @@ class Posts::ReportsController < ApplicationController
   def create
     authorize @post, :show?
     PostReportsJob.perform_async(@post.id, current_user.id)
-
-    head :no_content
   end
 
   def download

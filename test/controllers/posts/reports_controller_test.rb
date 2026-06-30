@@ -17,7 +17,7 @@ class Posts::ReportsControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    assert_response :no_content
+    assert_response :success
   end
 
   def test_should_download_pdf

@@ -21,6 +21,7 @@ Rails.application.routes.draw do
         get :download, on: :collection
       end
     end
+    resource :bulk_update, only: %i[update destroy], module: :posts
   end
 
   root "home#index"

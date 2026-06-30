@@ -14,6 +14,7 @@ import {
 const usePostFormHeader = ({
   defaultPrimaryAction,
   onCancel,
+  onPreview,
   onSubmitWithStatus,
 }) => {
   const history = useHistory();
@@ -58,9 +59,14 @@ const usePostFormHeader = ({
     history.push(routes.posts.index);
   };
 
+  const handlePreview = () => {
+    onPreview?.(values);
+  };
+
   return {
     handleAction,
     handleCancel,
+    handlePreview,
     primaryAction,
     primaryActionLabel,
     setPrimaryAction,

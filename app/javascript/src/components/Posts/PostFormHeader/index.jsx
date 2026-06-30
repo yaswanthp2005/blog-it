@@ -21,6 +21,7 @@ const PostFormHeader = ({
   const {
     handleAction,
     handleCancel,
+    handlePreview,
     primaryAction,
     primaryActionLabel,
     setPrimaryAction,
@@ -28,6 +29,7 @@ const PostFormHeader = ({
   } = usePostFormHeader({
     defaultPrimaryAction,
     onCancel,
+    onPreview,
     onSubmitWithStatus,
   });
 
@@ -42,7 +44,7 @@ const PostFormHeader = ({
             icon={() => <UpArrow className="rotate-45" size={20} />}
             style="text"
             tooltipProps={{ content: t("common.preview") }}
-            onClick={onPreview}
+            onClick={handlePreview}
           />
         )}
         <Button

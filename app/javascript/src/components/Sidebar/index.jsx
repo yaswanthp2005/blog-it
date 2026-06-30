@@ -6,7 +6,6 @@ import PropTypes from "prop-types";
 
 import CategoryButton from "./CategoryButton";
 import { MY_BLOG_POSTS_ITEM, NAV_ITEMS } from "./constants";
-import DisabledMenuButton from "./DisabledMenuButton";
 import useSidebar from "./hooks/useSidebar";
 import NavItem from "./NavItem";
 import UserMenu from "./UserMenu";
@@ -31,7 +30,6 @@ const Sidebar = ({ isCategoriesOpen, onBookClick, onCategoryClick }) => {
       <div className="flex flex-col items-center gap-y-4 px-2">
         <nav className="flex flex-col items-center gap-y-3">
           {renderNavItem({ ...NAV_ITEMS[0], onClick: onBookClick })}
-          <DisabledMenuButton />
           {renderNavItem(NAV_ITEMS[1])}
           <CategoryButton
             isCategoriesOpen={isCategoriesOpen}

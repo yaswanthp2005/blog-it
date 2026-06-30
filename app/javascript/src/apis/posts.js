@@ -9,6 +9,16 @@ const generatePdf = slug => axios.post(`/posts/${slug}/report`, {});
 const download = slug =>
   axios.get(`/posts/${slug}/report/download`, { responseType: "blob" });
 
+const bulkUpdate = ({ slugs, status }) =>
+  axios.patch("/bulk_update", {
+    bulk_update: { slugs, status },
+  });
+
+const bulkDestroy = ({ slugs }) =>
+  axios.delete("/bulk_update", {
+    data: { bulk_update: { slugs } },
+  });
+
 const create = ({ categoryIds, status, ...payload }) =>
   axios.post("/posts", {
     post: {
@@ -40,6 +50,8 @@ const vote = ({ slug, voteType }) =>
   axios.post(`/posts/${slug}/vote`, { vote: { vote_type: voteType } });
 
 const postsApi = {
+  bulkDestroy,
+  bulkUpdate,
   create,
   destroy,
   download,

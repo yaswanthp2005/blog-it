@@ -1,3 +1,5 @@
+import { POST_STATUSES } from "./constants";
+
 const formatDraftSavedAt = savedAt => {
   const date = new Date(savedAt);
   const time = date
@@ -73,10 +75,23 @@ const buildInitialValues = post => ({
   title: post.title,
 });
 
+const buildPreviewPost = (formValues, post) => ({
+  ...post,
+  title: formValues.title,
+  description: formValues.description,
+  categories: formValues.categoryIds.map(({ label, value }) => ({
+    id: value,
+    name: label,
+  })),
+  status: POST_STATUSES.DRAFT,
+  lastPublishedAt: null,
+});
+
 export {
   buildCategoryIds,
   buildCategoryOptions,
   buildInitialValues,
+  buildPreviewPost,
   capitalizeStatus,
   formatDraftSavedAt,
   formatPublishedDate,

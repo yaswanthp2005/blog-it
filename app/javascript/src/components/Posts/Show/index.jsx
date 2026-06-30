@@ -8,7 +8,12 @@ import { useShowPost } from "hooks/reactQuery/usePostsApi";
 import { Download, Edit } from "neetoicons";
 import { Button, NoData, Spinner, Tag, Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
-import { generatePath, useHistory, useParams } from "react-router-dom";
+import {
+  generatePath,
+  useHistory,
+  useLocation,
+  useParams,
+} from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
@@ -19,13 +24,17 @@ import { formatPublishedDate } from "../common/utils";
 
 const Show = () => {
   const history = useHistory();
+  const location = useLocation();
   const { slug } = useParams();
   const { t } = useTranslation();
-  const { data: post, isLoading } = useShowPost(slug);
+  const isPreview = location.state?.isPreview;
+  const previewPost = location.state?.previewPost;
+  const { data: fetchedPost, isLoading } = useShowPost(slug, !isPreview);
+  const post = isPreview ? previewPost : fetchedPost;
   const currentUserId = getFromLocalStorage("authUserId");
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
 
-  if (isLoading) {
+  if (!isPreview && isLoading) {
     return (
       <Container>
         <div className="flex h-64 items-center justify-center">
@@ -54,7 +63,7 @@ const Show = () => {
   } = post;
 
   const isOwnPost = userId === currentUserId;
-  const isDraft = status === POST_STATUSES.DRAFT;
+  const isDraft = isPreview || status === POST_STATUSES.DRAFT;
 
   const handleEdit = () => {
     history.push(generatePath(routes.posts.edit, { slug }));
