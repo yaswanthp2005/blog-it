@@ -9,16 +9,15 @@ const Form = ({ categoryOptions, statusOptions }) => {
 
   return (
     <div className="w-full space-y-4">
-      <div className="w-full" data-cy="neeto-filters-name-block">
+      <div className="w-full">
         <Input
           className="w-full"
-          data-cy="neeto-filters-name-filter"
           label={t("posts.table.title")}
           name="title"
           placeholder={t("posts.filters.titlePlaceholder")}
         />
       </div>
-      <div className="w-full" data-cy="neeto-filters-category-block">
+      <div className="w-full">
         <Select
           isClearable
           isMulti
@@ -30,7 +29,7 @@ const Form = ({ categoryOptions, statusOptions }) => {
           placeholder={t("posts.filters.categoryPlaceholder")}
         />
       </div>
-      <div className="w-full" data-cy="neeto-filters-status-block">
+      <div className="w-full">
         <Select
           className="w-full"
           isClearable={false}

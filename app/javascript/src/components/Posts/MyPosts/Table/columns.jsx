@@ -1,9 +1,10 @@
 import React from "react";
 
 import ActionsDropdown from "./ActionsDropdown";
-import { COLUMN_KEYS } from "./constants";
-import TitleCell from "./TitleCell";
-import { formatMyPostsDateTime } from "./utils";
+import TitleCell from "./cells/TitleCell";
+
+import { COLUMN_KEYS } from "../constants";
+import { formatMyPostsDateTime } from "../utils";
 
 const buildColumnData = ({ onDelete, onStatusChange, t }) => [
   {

@@ -10,11 +10,11 @@ import { useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
-import { POST_FORM_VALIDATION_SCHEMA } from "./constants";
-import Form from "./Form";
-import useEditPost from "./hooks/useEditPost";
-import PostFormHeader from "./PostFormHeader";
-import { buildCategoryOptions, buildInitialValues } from "./utils";
+import { POST_FORM_VALIDATION_SCHEMA } from "../common/constants";
+import Form from "../common/Form";
+import { buildCategoryOptions, buildInitialValues } from "../common/utils";
+import useEditPost from "../hooks/useEditPost";
+import PostFormHeader from "../PostFormHeader";
 
 const Edit = () => {
   const { slug } = useParams();

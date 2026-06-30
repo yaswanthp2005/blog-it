@@ -5,14 +5,14 @@ import { Typography } from "neetoui";
 import { useTranslation } from "react-i18next";
 import withTitle from "utils/withTitle";
 
-import AppliedFilters from "./AppliedFilters";
-import BulkDeleteAlert from "./BulkDeleteAlert";
-import DeleteAlert from "./DeleteAlert";
+import BulkDeleteAlert from "./Alerts/BulkDeleteAlert";
+import DeleteAlert from "./Alerts/DeleteAlert";
+import AppliedFilters from "./Filters/AppliedFilters";
+import SearchFilters from "./Filters/SearchFilters";
 import useColumnData from "./hooks/useColumnData";
 import useMyPostsTable from "./hooks/useMyPostsTable";
-import SearchFilters from "./SearchFilters";
 import PostsTable from "./Table";
-import TableHeader from "./TableHeader";
+import TableHeader from "./Table/TableHeader";
 
 const MyPosts = () => {
   const { t } = useTranslation();

@@ -16,7 +16,6 @@ const TableActions = ({ onSearchFiltersOpen }) => {
         dropdownProps={{ strategy: "fixed" }}
         label={t("posts.filters.columns")}
         buttonProps={{
-          "data-cy": "columns-dropdown-button",
           tooltipProps: { content: t("posts.filters.columns") },
         }}
       >
@@ -25,7 +24,6 @@ const TableActions = ({ onSearchFiltersOpen }) => {
         </ActionDropdown.Menu>
       </ActionDropdown>
       <Button
-        data-cy="neeto-filters-toggle-btn"
         icon={Filter}
         style="text"
         tooltipProps={{ content: t("posts.filters.searchFilters") }}

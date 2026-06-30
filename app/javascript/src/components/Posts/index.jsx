@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
-import Card from "./Card";
+import Card from "./common/Card";
 
 const Posts = () => {
   const { t } = useTranslation();

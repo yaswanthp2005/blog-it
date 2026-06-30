@@ -2,8 +2,8 @@ import { useMemo } from "react";
 
 import { useTranslation } from "react-i18next";
 
-import buildColumnData from "../columns";
 import { COLUMN_KEYS } from "../constants";
+import buildColumnData from "../Table/columns";
 
 const useColumnData = ({ onDelete, onStatusChange, visibleColumns }) => {
   const { t } = useTranslation();

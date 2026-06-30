@@ -1,4 +1,4 @@
-import { POST_STATUSES } from "../constants";
+import { POST_STATUSES } from "../common/constants";
 
 const COLUMN_KEYS = {
   TITLE: "title",

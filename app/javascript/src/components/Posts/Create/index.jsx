@@ -1,47 +1,27 @@
-import routes from "constants/routes";
-
 import React from "react";
 
 import { Container } from "components/commons";
 import { useFetchCategories } from "hooks/reactQuery/useCategoriesApi";
-import { useCreatePost } from "hooks/reactQuery/usePostsApi";
 import { Spinner } from "neetoui";
 import { Form as NeetoUIForm } from "neetoui/formik";
 import { useTranslation } from "react-i18next";
-import { useHistory } from "react-router-dom";
 import withTitle from "utils/withTitle";
 
 import {
   POST_FORM_INITIAL_VALUES,
   POST_FORM_VALIDATION_SCHEMA,
-} from "./constants";
-import Form from "./Form";
-import PostFormHeader from "./PostFormHeader";
-import { buildCategoryIds, buildCategoryOptions } from "./utils";
+} from "../common/constants";
+import Form from "../common/Form";
+import { buildCategoryOptions } from "../common/utils";
+import useCreatePost from "../hooks/useCreatePost";
+import PostFormHeader from "../PostFormHeader";
 
 const Create = () => {
-  const history = useHistory();
   const { t } = useTranslation();
-  const { mutateAsync: createPost } = useCreatePost();
+  const { handleSubmitWithStatus } = useCreatePost();
   const { data: categories, isLoading } = useFetchCategories();
 
   const categoryOptions = buildCategoryOptions(categories);
-
-  const buildPayload = values => ({
-    ...values,
-    categoryIds: buildCategoryIds(values.categoryIds),
-  });
-
-  const handleSubmitWithStatus = async (values, status) => {
-    try {
-      const payload = { ...buildPayload(values), status };
-
-      await createPost(payload);
-      history.push(routes.posts.index);
-    } catch (error) {
-      logger.error(error);
-    }
-  };
 
   return (
     <Container mainClassName="bg-gray-50">

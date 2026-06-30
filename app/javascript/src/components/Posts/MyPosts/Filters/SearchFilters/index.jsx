@@ -12,7 +12,7 @@ import Form from "./Form";
 import {
   FILTER_FORM_INITIAL_VALUES,
   STATUS_FILTER_OPTIONS,
-} from "../constants";
+} from "../../constants";
 
 const SearchFilters = ({ filters, isOpen, onClose, onSubmit }) => {
   const { t } = useTranslation();
@@ -63,11 +63,7 @@ const SearchFilters = ({ filters, isOpen, onClose, onSubmit }) => {
       onClose={onClose}
     >
       <Pane.Header>
-        <Typography
-          data-cy="neeto-filters-pane-header"
-          style="h3"
-          weight="semibold"
-        >
+        <Typography style="h3" weight="semibold">
           {t("posts.filters.searchFilters")}
         </Typography>
       </Pane.Header>

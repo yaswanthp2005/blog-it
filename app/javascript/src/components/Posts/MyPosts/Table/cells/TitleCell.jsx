@@ -6,7 +6,7 @@ import { Tooltip } from "neetoui";
 import PropTypes from "prop-types";
 import { Link, generatePath } from "react-router-dom";
 
-import { getTruncatedTitle } from "./utils";
+import { getTruncatedTitle } from "../../utils";
 
 const TitleCell = ({ post, title }) => {
   const { displayTitle, isTruncated } = getTruncatedTitle(title);

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { useDestroyPost, useUpdatePost } from "hooks/reactQuery/usePostsApi";
 import { generatePath, useHistory, useParams } from "react-router-dom";
 
-import { buildCategoryIds } from "../utils";
+import { buildCategoryIds } from "../common/utils";
 
 const useEditPost = () => {
   const history = useHistory();

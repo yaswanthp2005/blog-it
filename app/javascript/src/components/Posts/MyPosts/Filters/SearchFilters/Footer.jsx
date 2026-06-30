@@ -5,7 +5,7 @@ import { Button, Toastr } from "neetoui";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
-import { FILTER_FORM_INITIAL_VALUES } from "../constants";
+import { FILTER_FORM_INITIAL_VALUES } from "../../constants";
 
 const Footer = ({ onClose, onSubmit }) => {
   const { t } = useTranslation();
@@ -20,14 +20,8 @@ const Footer = ({ onClose, onSubmit }) => {
 
   return (
     <div className="flex items-center gap-2">
+      <Button label={t("posts.filters.done")} style="primary" type="submit" />
       <Button
-        data-cy="neeto-filters-done-btn"
-        label={t("posts.filters.done")}
-        style="primary"
-        type="submit"
-      />
-      <Button
-        data-cy="neeto-filters-clear-btn"
         label={t("posts.filters.clearFilters")}
         style="secondary"
         onClick={handleClear}

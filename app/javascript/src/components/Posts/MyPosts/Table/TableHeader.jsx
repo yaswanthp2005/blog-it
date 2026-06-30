@@ -1,7 +1,8 @@
 import React from "react";
 
-import BulkActions from "./BulkActions";
 import TableActions from "./TableActions";
+
+import BulkActions from "../BulkActions";
 
 const TableHeader = ({
   hasSelection,

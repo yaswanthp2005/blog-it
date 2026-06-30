@@ -4,7 +4,7 @@ import { NoData, Table } from "neetoui";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
-import { DEFAULT_PAGE_SIZE } from "../constants";
+import { DEFAULT_PAGE_SIZE } from "../../common/constants";
 
 const PostsTable = ({
   columnData,

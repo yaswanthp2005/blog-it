@@ -12,9 +12,10 @@ import { generatePath, useHistory, useParams } from "react-router-dom";
 import { getFromLocalStorage } from "utils/storage";
 import withTitle from "utils/withTitle";
 
-import { POST_STATUSES } from "./constants";
 import DownloadReport from "./DownloadReport";
-import { formatPublishedDate } from "./utils";
+
+import { POST_STATUSES } from "../common/constants";
+import { formatPublishedDate } from "../common/utils";
 
 const Show = () => {
   const history = useHistory();

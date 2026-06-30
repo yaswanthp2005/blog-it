@@ -6,7 +6,10 @@ import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { useHistory } from "react-router-dom";
 
-import { POST_STATUSES, PRIMARY_ACTION_LABEL_KEYS } from "../../constants";
+import {
+  POST_STATUSES,
+  PRIMARY_ACTION_LABEL_KEYS,
+} from "../../common/constants";
 
 const usePostFormHeader = ({
   defaultPrimaryAction,

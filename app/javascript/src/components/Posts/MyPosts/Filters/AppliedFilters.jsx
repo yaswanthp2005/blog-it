@@ -5,7 +5,7 @@ import { Tag, Typography } from "neetoui";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
-import { STATUS_FILTER_OPTIONS } from "./constants";
+import { STATUS_FILTER_OPTIONS } from "../constants";
 
 const AppliedFilters = ({
   appliedFilters,

@@ -18,4 +18,5 @@ json.upvotes post.upvotes
 json.downvotes post.downvotes
 json.net_vote_count post.net_vote_count
 json.is_bloggable post.is_bloggable
-json.user_vote post.user_vote_type(current_user)
+json.user_vote post.user_vote_type(@current_user)
+

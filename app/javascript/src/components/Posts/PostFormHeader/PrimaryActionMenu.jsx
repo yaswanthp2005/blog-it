@@ -4,7 +4,7 @@ import { Check } from "neetoicons";
 import { ActionDropdown } from "neetoui";
 import PropTypes from "prop-types";
 
-import { POST_STATUSES } from "../constants";
+import { POST_STATUSES } from "../common/constants";
 
 const CheckPrefix = ({ isSelected }) => (
   <span className="flex w-4 items-center justify-center">

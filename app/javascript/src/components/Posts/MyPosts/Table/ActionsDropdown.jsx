@@ -5,7 +5,7 @@ import { Button, Dropdown } from "neetoui";
 import PropTypes from "prop-types";
 import { useTranslation } from "react-i18next";
 
-import { POST_STATUSES } from "../constants";
+import { POST_STATUSES } from "../../common/constants";
 
 const ActionsDropdown = ({ onDelete, onStatusChange, post }) => {
   const { t } = useTranslation();
